@@ -1,0 +1,50 @@
+OUTPUT_FORMAT("binary")
+ENTRY(start)
+phys = 0x00007c00;
+SECTIONS
+{		
+	.bootloader phys : AT(phys) {
+	__bootloader__start__ = .;
+	*boot.*(.text);
+	*boot.*(.data);
+	__bootloader_code_end__ = .;
+	. += 510 - (__bootloader_code_end__ - __bootloader__start__);
+	BYTE(0x55);
+	BYTE(0xAA);
+	__bootloader__end__ = .;
+	} 
+	
+	__kernel_start_sector__ = 2;
+	
+	.text :
+	{
+    __kernel_memory_start__ = .;
+	__code_start__ = .;
+    *(.text)
+    *(.rodata)
+	. = ALIGN(512);
+	__code_end__ = .;
+	} 
+	
+  .data :
+  {
+    __data_start__ = .;
+    *(.data)
+	. = ALIGN(512);
+	__data_end__ = .;
+  }
+
+  __kernel_sectors_length__ = ((. - __kernel_memory_start__) / 512);
+
+  .bss :
+  {
+	
+    __bss_start__ = .;
+    *(.bss)
+	. = ALIGN(512);
+	__bss_end__ = .;
+  }
+   
+  __stack_start__ = __bss_end__ + 0x1000;
+  
+}
