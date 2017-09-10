@@ -29,9 +29,11 @@ namespace interrupts {
 		const byte machine_check = 18;
 	}
 
-	typedef void(*interrupt_handler)(const interrupt_frame& frame);
+	typedef void(*interrupt_handler)(interrupt_frame& frame);
 
 	void initialize();
+	
+	void enable();
 
 	void add_handler(dword interrupt_code, interrupt_handler handler);
 }

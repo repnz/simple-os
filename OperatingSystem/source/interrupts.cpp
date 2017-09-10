@@ -30,9 +30,11 @@ const char *exception_messages[] =
 	"Machine Check"
 };
 
+interrupts::interrupt_handler interrupt_handlers[255];
 
 void interrupts::initialize() {
-	
+	memset(interrupt_handlers, 0, 255*sizeof(interrupts::interrupt_handler));
+
 	descriptor_tables::idt::clear();
 
 	for (word i = 0; i < 255; ++i) {
@@ -41,17 +43,30 @@ void interrupts::initialize() {
 	}
 
 	descriptor_tables::idt::flush();
+}
 
-	ASM_VOLATILE("sti");	
+void interrupts::enable() {
+	ASM_VOLATILE("sti");
 }
 
 void interrupts::add_handler(dword interrupt_code, interrupt_handler handler) {
+	interrupt_handlers[interrupt_code] = handler;
 }
 
-
-
-GLOBAL void isr_handler(const interrupts::interrupt_frame r) {
-	devices::vga::write_number(r.int_no);
-	devices::vga::write_text(" ");
-	devices::vga::write_number(r.err_code);
+GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
+	
+	if (interrupt_handlers[frame.int_no] != 0 && frame.int_no < 255) {
+		interrupt_handlers[frame.int_no](frame);		
+	}
+	else if (frame.int_no <= 18) {
+		devices::vga::write_text(exception_messages[frame.int_no]);
+		devices::vga::write_char(' ');
+		while (true);
+	}
+	else {
+		devices::vga::write_text("cannot handle interrupt ");
+		devices::vga::write_number(frame.int_no);
+		devices::vga::write_char(' ');
+		while (true);
+	}
 }

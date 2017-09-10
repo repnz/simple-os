@@ -1,6 +1,5 @@
 #include <descriptor_tables/idt.h>
 #include <descriptor_tables/descriptor.h>
-#include <mem.h>
 
 using namespace descriptor_tables;
 
