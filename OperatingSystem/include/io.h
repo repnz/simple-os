@@ -11,3 +11,9 @@ inline void outb(word port, byte data) {
 	"out %0, %1" : : "dN" (port), "a" (data)
 		);
 }
+
+inline void io_wait(void) {
+	/* Port 0x80 is used for 'checkpoints' during POST. */
+	/* The Linux kernel seems to think it is free for use :-/ */
+	outb(0x80, 0);
+}

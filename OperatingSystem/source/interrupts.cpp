@@ -32,6 +32,44 @@ const char *exception_messages[] =
 
 interrupts::interrupt_handler interrupt_handlers[255];
 
+void irq_install() {
+	// call initialize cw1_init with future cw4
+	outb(0x20, 0x11);
+	io_wait();
+
+	outb(0xA0, 0x11);
+	io_wait();
+
+	// map irq to 32..39, 40..47
+	outb(0x21, 0x20);
+	io_wait();
+
+	outb(0xA1, 0x28);
+	io_wait();
+
+	// set irq line 2 for communication in primary
+	outb(0x21, 0x04);
+	io_wait();
+
+	// set irq line 2 for communication in slave
+	outb(0xA1, 0x02);
+	io_wait();
+
+	// set 80x86 mode in 2 pics
+	outb(0x21, 0x01);
+	io_wait();
+
+	outb(0xA1, 0x01);
+	io_wait();
+	
+	// null out data registers
+	outb(0x21, 0x0);
+	io_wait();
+	
+	outb(0xA1, 0x0);
+	io_wait();
+}
+
 void interrupts::initialize() {
 	memset(interrupt_handlers, 0, 255*sizeof(interrupts::interrupt_handler));
 
@@ -43,6 +81,7 @@ void interrupts::initialize() {
 	}
 
 	descriptor_tables::idt::flush();
+	irq_install();
 }
 
 void interrupts::enable() {
@@ -53,10 +92,25 @@ void interrupts::add_handler(dword interrupt_code, interrupt_handler handler) {
 	interrupt_handlers[interrupt_code] = handler;
 }
 
+inline bool is_irq(byte int_no) {
+	return int_no >= 32 && int_no <= 48;
+}
+
 GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 	
-	if (interrupt_handlers[frame.int_no] != 0 && frame.int_no < 255) {
+	if (interrupt_handlers[frame.int_no] != 0) {
 		interrupt_handlers[frame.int_no](frame);		
+
+		if (is_irq(frame.int_no)) {
+			if (frame.int_no >= 40)
+			{
+				outb(0xA0, 0x20);
+			}
+
+			/* In either case, we need to send an EOI to the master
+			*  interrupt controller too */
+			outb(0x20, 0x20);
+		}
 	}
 	else if (frame.int_no <= 18) {
 		devices::vga::write_text(exception_messages[frame.int_no]);

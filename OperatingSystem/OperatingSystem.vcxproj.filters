@@ -33,10 +33,19 @@
     <ClCompile Include="source\devices\vga.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\mem.cpp">
+    <ClCompile Include="source\extern_isrs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\extern_isrs.cpp">
+    <ClCompile Include="source\global\mem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\pic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\cpu.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,11 +63,11 @@
     <None Include="source\isrs.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="source\asm_cpu.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\mem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,6 +96,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\extern_isrs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\global\mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

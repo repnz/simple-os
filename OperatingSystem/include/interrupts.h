@@ -29,6 +29,25 @@ namespace interrupts {
 		const byte machine_check = 18;
 	}
 
+	namespace irqs {
+		const byte timer = 32;
+		const byte keyboard = 33;
+		const byte cascade_for_8259a = 34;
+		const byte serial_port_2 = 35;
+		const byte serial_port_1 = 36;
+		const byte reserved_37= 37;
+		const byte diskette_drive = 38;
+		const byte parallel_port_1 = 39;
+		const byte cmos_real_time_clock = 40;
+		const byte cga_vertical_retrace = 41;
+		const byte reserved_42 = 42;
+		const byte reserved_43 = 43;
+		const byte reserved_44 = 44;
+		const byte fpu = 45;
+		const byte hard_disk_controller = 46;
+		const byte reserved_47 = 47;
+	}
+
 	typedef void(*interrupt_handler)(interrupt_frame& frame);
 
 	void initialize();
