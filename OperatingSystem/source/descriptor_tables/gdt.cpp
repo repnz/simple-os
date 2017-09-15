@@ -49,7 +49,7 @@ void gdt::flush() {
 	gdt_flush(d);
 }
 
-void initialize() {
+static void initialize() {
 
 	gdt_entries[0] = internal_gdt_entry();
 

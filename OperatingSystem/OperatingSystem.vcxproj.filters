@@ -36,16 +36,10 @@
     <ClCompile Include="source\extern_isrs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\global\mem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\pic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="include\cpu.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\cpu.cpp">
+    <ClCompile Include="source\devices\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -61,9 +55,6 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="source\isrs.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="source\asm_cpu.asm">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -101,7 +92,10 @@
     <ClInclude Include="include\global\mem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\pic.h">
+    <ClInclude Include="include\devices\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memory\entries_heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

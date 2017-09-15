@@ -7,7 +7,7 @@
 *  corresponds to each and every exception. We get the correct
 *  message by accessing like:
 *  exception_message[interrupt_number] */
-const char *exception_messages[] =
+const char* exception_messages[] =
 {
 	"Division By Zero",
 	"Debug",
@@ -34,51 +34,38 @@ interrupts::interrupt_handler interrupt_handlers[255];
 
 void irq_install() {
 	// call initialize cw1_init with future cw4
-	outb(0x20, 0x11);
-	io_wait();
-
-	outb(0xA0, 0x11);
-	io_wait();
+	outb_wait(0x20, 0x11);
+	outb_wait(0xA0, 0x11);
 
 	// map irq to 32..39, 40..47
-	outb(0x21, 0x20);
-	io_wait();
-
-	outb(0xA1, 0x28);
-	io_wait();
+	outb_wait(0x21, 0x20);
+	outb_wait(0xA1, 0x28);
 
 	// set irq line 2 for communication in primary
-	outb(0x21, 0x04);
-	io_wait();
+	outb_wait(0x21, 0x04);
 
 	// set irq line 2 for communication in slave
-	outb(0xA1, 0x02);
-	io_wait();
+	outb_wait(0xA1, 0x02);
 
 	// set 80x86 mode in 2 pics
-	outb(0x21, 0x01);
-	io_wait();
+	outb_wait(0x21, 0x01);
+	outb_wait(0xA1, 0x01);
 
-	outb(0xA1, 0x01);
-	io_wait();
-	
 	// null out data registers
-	outb(0x21, 0x0);
-	io_wait();
-	
-	outb(0xA1, 0x0);
-	io_wait();
+	outb_wait(0x21, 0x0);
+	outb_wait(0xA1, 0x0);
 }
 
 void interrupts::initialize() {
-	memset(interrupt_handlers, 0, 255*sizeof(interrupts::interrupt_handler));
-
+	mem::zero<interrupt_handler>(interrupt_handlers, 255);
 	descriptor_tables::idt::clear();
 
 	for (word i = 0; i < 255; ++i) {
 		void* addr = get_extern_address(i);
 		descriptor_tables::idt::set_entry(i, addr, 0x8);
 	}
+
+	
 
 	descriptor_tables::idt::flush();
 	irq_install();
@@ -97,14 +84,15 @@ inline bool is_irq(byte int_no) {
 }
 
 GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
-	
+
 	if (interrupt_handlers[frame.int_no] != 0) {
 		interrupt_handlers[frame.int_no](frame);		
 
 		if (is_irq(frame.int_no)) {
 			if (frame.int_no >= 40)
 			{
-				outb(0xA0, 0x20);
+				// send eoi to slave interrupt
+				outb(0xA0, 0x20); 
 			}
 
 			/* In either case, we need to send an EOI to the master

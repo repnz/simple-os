@@ -7,5 +7,6 @@ namespace devices {
 		void write_number(dword value);
 		void write_hex(dword value);
 		void write_text(const char* text);
+		void clear();
 	}
 }

@@ -107,22 +107,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\cpu.h" />
-    <ClCompile Include="source\cpu.cpp" />
     <ClCompile Include="source\descriptor_tables\gdt.cpp" />
     <ClCompile Include="source\descriptor_tables\idt.cpp" />
+    <ClCompile Include="source\devices\timer.cpp" />
     <ClCompile Include="source\extern_isrs.cpp" />
     <ClCompile Include="source\interrupts.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="Makefile" />
-    <ClCompile Include="source\global\mem.cpp" />
     <ClCompile Include="source\devices\vga.cpp" />
-    <ClCompile Include="source\pic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="linker.ld" />
     <None Include="source\boot.asm" />
     <None Include="build.bat" />
-    <None Include="source\asm_cpu.asm" />
     <None Include="source\isrs.asm" />
     <None Include="source\descriptor_tables\descriptors.asm" />
   </ItemGroup>
@@ -130,6 +127,7 @@
     <ClInclude Include="include\descriptor_tables\descriptor.h" />
     <ClInclude Include="include\descriptor_tables\gdt.h" />
     <ClInclude Include="include\descriptor_tables\idt.h" />
+    <ClInclude Include="include\devices\timer.h" />
     <ClInclude Include="include\extern_isrs.h" />
     <ClInclude Include="include\global\global.h" />
     <ClInclude Include="include\io.h" />
@@ -138,7 +136,7 @@
     <ClInclude Include="include\devices\vga.h" />
     <ClInclude Include="include\global\stdint.h" />
     <ClInclude Include="include\global\attributes.h" />
-    <ClInclude Include="include\pic.h" />
+    <ClInclude Include="include\memory\entries_heap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

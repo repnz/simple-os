@@ -5,17 +5,18 @@
 #include <devices/timer.h>
 #include <interrupts.h>
 
-void print_hello_world() {
-	devices::vga::write_text("hello world ");
+void initialize() {
+	devices::vga::initialize();
+	devices::vga::clear();
+	interrupts::initialize();
+
+	timer::initialize();
+	interrupts::enable();
 }
 
+
 GLOBAL void kernel_entry() {
-
-	devices::vga::initialize();
-	interrupts::initialize();
-	timer::initialize(print_hello_world);
-
-	interrupts::enable();
+	initialize();
 
 	while (true);
 }

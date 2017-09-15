@@ -34,5 +34,5 @@ void idt::flush() {
 }
 
 void idt::clear() {
-	memset(&idt_entries, 0, sizeof(internal_idt_entry) * idt::size);
+	mem::zero<internal_idt_entry>(idt_entries, idt::size);
 }

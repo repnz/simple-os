@@ -12,6 +12,14 @@ inline void outb(word port, byte data) {
 		);
 }
 
+inline void outb_wait(word port, byte data) {
+	ASM_VOLATILE(
+		"out %0, %1" : : "dN" (port), "a" (data)
+	);
+	
+	outb(0x80, 0);
+}
+
 inline void io_wait(void) {
 	/* Port 0x80 is used for 'checkpoints' during POST. */
 	/* The Linux kernel seems to think it is free for use :-/ */
