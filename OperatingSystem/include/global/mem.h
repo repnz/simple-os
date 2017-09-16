@@ -1,4 +1,5 @@
 #pragma once
+#include <screen.h>
 
 namespace mem {
 	template <typename T>

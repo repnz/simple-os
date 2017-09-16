@@ -44,7 +44,7 @@ SECTIONS
 	. = ALIGN(512);
 	__bss_end__ = .;
   }
-   
-  __stack_start__ = __bss_end__ + 0x1000;
+  __stack_start__ = __bss_end__ + 0x2000;
+  __dynamic_memory_start__ = __stack_start__ + 0x4;
   
 }

@@ -36,11 +36,24 @@ fix_cs_register:
 	mov cl, __kernel_start_sector__
 	mov al, __kernel_sectors_length__
 	mov bx, __kernel_memory_start__
+
+	call reset_disk_drive
 	call load_sectors
+
 	jmp move_to_protected_jump
 
-load_sectors: ; cl = sector number, al = number of sectors to load, es:bx address to load
+reset_disk_drive:
+	mov ah, 0
+	mov dl, drive
+	int 0x13
+	jnc .done
+	mov si, error_reset_disk
+	call print_string
+.done
+	ret
 
+load_sectors: ; cl = sector number, al = number of sectors to load, es:bx address to load
+	mov dl, drive
 	mov dh, 0     ; head
 	mov ch, 0     ; cylinder
 	mov ah, 2
@@ -62,12 +75,12 @@ print_string: ; si = c string pointer
 		lodsb ; load char from si into al
 
 		; if char is zero end done
-		test al,al
+		test al, al
 		jz .done
 	
-		mov ah,0x0e ; 0x0e function for teletype printing character
+		mov ah, 0x0e ; 0x0e function for teletype printing character
 		mov bx,0 ; set pageNumber and color to 0
-		int 10h
+		int 0x10
 		jmp .print_loop
 	.done:
 		ret
@@ -104,5 +117,6 @@ protected_mode_initialize: ; cs=0x08 to index GDT_CODE
 	jmp $
 
 load_msg db "Loading Kernel..", 10, 13, 0
-error_loading db "Error Loading Kernel!", 10, 13, 0
+error_loading db "Error Reading Sectors!", 10, 13, 0
+error_reset_disk db "Error Reseting disk drive!", 10, 13, 0
 sleep db "Sleep Forever", 10, 13, 0

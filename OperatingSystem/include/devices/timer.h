@@ -6,6 +6,4 @@ namespace timer {
 	void initialize(on_tick f);
 	
 	void initialize();
-	
-
 }

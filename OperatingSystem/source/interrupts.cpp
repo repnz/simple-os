@@ -1,6 +1,6 @@
 #include <interrupts.h>
 #include <descriptor_tables/idt.h>
-#include <devices/vga.h>
+#include <screen.h>
 #include <extern_isrs.h>
 
 /* This is a simple string array. It contains the message that
@@ -65,8 +65,6 @@ void interrupts::initialize() {
 		descriptor_tables::idt::set_entry(i, addr, 0x8);
 	}
 
-	
-
 	descriptor_tables::idt::flush();
 	irq_install();
 }
@@ -101,14 +99,17 @@ GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 		}
 	}
 	else if (frame.int_no <= 18) {
-		devices::vga::write_text(exception_messages[frame.int_no]);
-		devices::vga::write_char(' ');
+		screen::write_text("caught exception: ");
+		screen::write_text(exception_messages[frame.int_no]);
+		screen::write_char(' ');
+		screen::write_text(" ");
+		screen::write_number(frame.eip, 16);
 		while (true);
 	}
 	else {
-		devices::vga::write_text("cannot handle interrupt ");
-		devices::vga::write_number(frame.int_no);
-		devices::vga::write_char(' ');
+		screen::write_text("cannot handle interrupt ");
+		screen::write_number(frame.int_no);
+		screen::write_char(' ');
 		while (true);
 	}
 }

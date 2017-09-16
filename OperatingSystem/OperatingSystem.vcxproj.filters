@@ -42,6 +42,15 @@
     <ClCompile Include="source\devices\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\memory\memory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\format.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\boot.asm">
@@ -95,7 +104,16 @@
     <ClInclude Include="include\devices\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\memory\entries_heap.h">
+    <ClInclude Include="include\screen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memory\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memory\heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
