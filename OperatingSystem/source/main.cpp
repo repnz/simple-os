@@ -21,11 +21,17 @@ struct my_struct {
 	int c;
 };
 
+my_struct s;
+
 /*
 This entry is called after booting and moving to protected mode
 */
 GLOBAL void kernel_entry() {
 	initialize();
+	
+	s.a = 10;
+	s.b = 20;
+	s.c = 30;
 
 	for (int i=0; i<5; ++i){
 		my_struct* s = memory::allocate<my_struct>();

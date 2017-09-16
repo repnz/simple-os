@@ -20,7 +20,7 @@ INC       := -I $(HEADERDIR) -include $(HEADERDIR)/global/global.h
 
 
 all: debug
-debug: CFLAGS += -g
+debug: CFLAGS += -g -O0
 debug: $(TARGET)
 release: $(TARGET)
 release: CFLAGS += -O3
