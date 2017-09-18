@@ -4,7 +4,7 @@
 extern dword __dynamic_memory_start__;
 const dword block_size = 14;
 
-memory::heap<5> _heap;
+memory::heap _heap;
 
 void memory::initialize() {
 	_heap.initialize((void*)&__dynamic_memory_start__, block_size);
