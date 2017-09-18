@@ -2,7 +2,6 @@
 #include <devices/vga.h>
 #include <format.h>
 
-#define WHITE_ON_BLACK 0x0f
 
 void screen::initialize() {
 	devices::vga::initialize();
@@ -27,4 +26,8 @@ void screen::write_number(dword number, byte base) {
 	for (int i = length-1; i >= 0; --i) {
 		devices::vga::write_char(buf[i]);
 	}
+}
+
+void screen::write_line() {
+	devices::vga::write_text("\r\n");
 }
