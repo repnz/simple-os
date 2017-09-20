@@ -1,6 +1,6 @@
 #include <screen.h>
 #include <devices/vga.h>
-#include <format.h>
+#include <std/format.h>
 
 
 void screen::initialize() {
@@ -21,7 +21,7 @@ void screen::write_text(const char* text) {
 
 void screen::write_number(dword number, byte base) {
 	char buf[32];
-	int length = format::num_to_string_reverse(buf, number, base);
+	int length = std::format::num_to_string_reverse(buf, number, base);
 
 	for (int i = length-1; i >= 0; --i) {
 		devices::vga::write_char(buf[i]);

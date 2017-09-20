@@ -1,8 +1,8 @@
 #include <devices/timer.h>
 #include <interrupts.h>
 #include <memory/memory.h>
-#include <format.h>
 #include <screen.h>
+#include <std/compiler.h>
 
 void initialize() {
 	screen::initialize();
@@ -21,23 +21,31 @@ struct my_struct {
 	int c;
 };
 
-my_struct s;
-
 /*
 This entry is called after booting and moving to protected mode
 */
 GLOBAL void kernel_entry() {
 	initialize();
-	
-	s.a = 10;
-	s.b = 20;
-	s.c = 30;
 
-	for (int i=0; i<5; ++i){
-		my_struct* s = memory::allocate<my_struct>();
-		memory::free(s);
+	my_struct* s;
+
+	s = memory::allocate_array<my_struct>(10);
+	
+	my_struct* ptr = s;
+
+	for (int i = 0; i < 10; ++i) {
+		s->a = 0x41414141;
+		s->b = 0x42424242;
+		s->c = 0x43434343;
+		++ptr;
 	}
 
+	my_struct* other = memory::allocate<my_struct>();
+	other->a = 10;
+	other->b = 10;
+	other->c = 10;
+
+	memory::free(s);
 
 	while (true);
 }

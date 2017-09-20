@@ -1,4 +1,5 @@
 #pragma once
+#include <std/compiler.h>
 
 namespace descriptor_tables {
 	struct descriptor {

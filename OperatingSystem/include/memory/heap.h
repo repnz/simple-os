@@ -2,7 +2,7 @@
 
 namespace memory {
 
-	const int entries_size = 5;
+	const int entries_size = 20;
 
 	class heap {
 	private:
@@ -25,7 +25,10 @@ namespace memory {
 
 		void initialize(void* start, dword block_size);
 		void* allocate(dword size);
-		void get_entry_from_address(void* address, int* block_index, word* num_of_blocks);
+		
+		void read_entry_from_address(void* address, int* block_index, word* num_of_blocks);
+		void* create_entry(int block_index, word num_of_blocks);
+
 		void free(void* address);
 
 		template <typename T>

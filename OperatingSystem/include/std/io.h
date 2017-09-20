@@ -1,4 +1,5 @@
 #pragma once
+#include <std/compiler.h>
 
 inline byte inb(word port) {
 	unsigned char rv;

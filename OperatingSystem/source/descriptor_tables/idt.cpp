@@ -1,5 +1,7 @@
 #include <descriptor_tables/idt.h>
 #include <descriptor_tables/descriptor.h>
+#include <std/mem.h>
+#include <std/compiler.h>
 
 using namespace descriptor_tables;
 
@@ -34,5 +36,5 @@ void idt::flush() {
 }
 
 void idt::clear() {
-	mem::zero<internal_idt_entry>(idt_entries, idt::size);
+	std::mem::zero<internal_idt_entry>(idt_entries, idt::size);
 }

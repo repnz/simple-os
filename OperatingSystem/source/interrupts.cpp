@@ -1,7 +1,11 @@
 #include <interrupts.h>
 #include <descriptor_tables/idt.h>
-#include <screen.h>
 #include <extern_isrs.h>
+#include <screen.h>
+
+#include <std/mem.h>
+#include <std/compiler.h>
+#include <std/io.h>
 
 /* This is a simple string array. It contains the message that
 *  corresponds to each and every exception. We get the correct
@@ -32,7 +36,7 @@ const char* exception_messages[] =
 
 interrupts::interrupt_handler interrupt_handlers[255];
 
-void irq_install() {
+void irq_install(){
 	// call initialize cw1_init with future cw4
 	outb_wait(0x20, 0x11);
 	outb_wait(0xA0, 0x11);
@@ -57,7 +61,7 @@ void irq_install() {
 }
 
 void interrupts::initialize() {
-	mem::zero<interrupt_handler>(interrupt_handlers, 255);
+	std::mem::zero<interrupt_handler>(interrupt_handlers, 255);
 	descriptor_tables::idt::clear();
 
 	for (word i = 0; i < 255; ++i) {

@@ -1,4 +1,5 @@
 #include <devices/vga.h>
+#include <std/mem.h>
 
 using namespace devices;
 
@@ -71,5 +72,5 @@ void vga::write_text(const char* text) {
 
 void vga::clear() {
 	word value = (current_attributes << 8) | ' ';
-	mem::set<word>((word*)video_memory, value, cells);
+	std::mem::set<word>((word*)video_memory, value, cells);
 }
