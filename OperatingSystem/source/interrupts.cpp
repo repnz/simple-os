@@ -1,7 +1,7 @@
 #include <interrupts.h>
 #include <descriptor_tables/idt.h>
 #include <extern_isrs.h>
-#include <screen.h>
+#include <console.h>
 
 #include <std/mem.h>
 #include <std/compiler.h>
@@ -62,6 +62,7 @@ void irq_install(){
 
 void interrupts::initialize() {
 	std::mem::zero<interrupt_handler>(interrupt_handlers, 255);
+
 	descriptor_tables::idt::clear();
 
 	for (word i = 0; i < 255; ++i) {
@@ -77,7 +78,7 @@ void interrupts::enable() {
 	ASM_VOLATILE("sti");
 }
 
-void interrupts::add_handler(dword interrupt_code, interrupt_handler handler) {
+void interrupts::set_handler(dword interrupt_code, interrupt_handler handler) {
 	interrupt_handlers[interrupt_code] = handler;
 }
 
@@ -103,17 +104,17 @@ GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 		}
 	}
 	else if (frame.int_no <= 18) {
-		screen::write_text("caught exception: ");
-		screen::write_text(exception_messages[frame.int_no]);
-		screen::write_char(' ');
-		screen::write_text(" ");
-		screen::write_number(frame.eip, 16);
+		console::write_text("caught exception: ");
+		console::write_text(exception_messages[frame.int_no]);
+		console::write_char(' ');
+		console::write_text(" ");
+		console::write_number(frame.eip, 16);
 		while (true);
 	}
 	else {
-		screen::write_text("cannot handle interrupt ");
-		screen::write_number(frame.int_no);
-		screen::write_char(' ');
+		console::write_text("cannot handle interrupt ");
+		console::write_number(frame.int_no);
+		console::write_char(' ');
 		while (true);
 	}
 }

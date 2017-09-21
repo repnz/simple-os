@@ -1,64 +1,103 @@
 #include <devices/vga.h>
 #include <std/mem.h>
+#include <std/compiler.h>
 
 using namespace devices;
 
-const void* video_memory = (void*)0xb8000;
-
-static byte* current_mem;
-static byte current_attributes;
 #define WHITE_ON_BLACK 0x0f
 
-const byte width = 80;
-const byte height = 25;
-const  int cells = (width * height);
-
-byte row = 0;
-byte column = 0;
-
-static inline byte* calculate_point() {
-	return (byte*)video_memory + ((column + (row * width)) * 2);
-}
-
-static bool increase_row() {
-	row++;
-
-	if (row >= height) {
-		row = 0;
+struct character_cell {
+	character_cell(byte attr, char value) : attributes(attr), value(value){
 	}
-}
 
-static bool increase_column() {
-	column++;
+	character_cell(){}
 
-	if (column >= width) {
-		column = 0;
-		increase_row();
-		current_mem = calculate_point();
-	}
-}
+	char value;
+	byte attributes;
 
-void vga::initialize() {	
-	current_mem = (byte*)video_memory;
+} PACKED;
+
+const int cells = (vga::width * vga::height);
+
+#define VIDEO_MEMORY (character_cell*)0xb8000
+#define VIDEO_MEMORY_END (VIDEO_MEMORY+cells)
+
+
+static byte current_row;
+static byte current_column;
+
+static character_cell default_clear_value;
+static bool enable_scrolling;
+static byte current_attributes;
+
+void vga::initialize(bool scrolling) {
+	enable_scrolling = scrolling;
 	current_attributes = WHITE_ON_BLACK;
-	row = 0;
-	column = 0;
+	default_clear_value = character_cell(current_attributes, ' ');
+
+	current_row = 0;
+	current_column = 0;
+}
+
+static inline character_cell* calculate_point(byte row, byte column) {
+	return VIDEO_MEMORY + (column + (row * vga::width));
+}
+
+void vga::scroll_down(byte lines) {
+
+	int scroll_cells = (lines * width);
+
+	std::mem::copy<character_cell>(
+		VIDEO_MEMORY,
+		VIDEO_MEMORY + scroll_cells,
+		(height - lines) * width
+		);
+	
+	std::mem::set<character_cell>(
+		VIDEO_MEMORY_END - scroll_cells,
+		default_clear_value,
+		scroll_cells
+		);
+}
+
+inline void write_char_pos(char character, byte attr, byte row, byte column) {
+	character_cell* c = calculate_point(row, column);
+	c->attributes = attr;
+	c->value = character;
+}
+
+void check_height() {
+	
 }
 
 void vga::write_char(char character) {
+
+	if (current_column >= vga::width) {
+		current_column = 0;
+		++current_row;
+	}
+
+	if (current_row >= vga::height) {
+		if (enable_scrolling) {
+			current_row = vga::height - 1;
+			vga::scroll_down(1);
+		}
+		else {
+			current_row = 0;
+		}
+	}
+
 	if (character == '\r') {
-		column = 0;
-		current_mem = calculate_point();
+		current_column = 0;
 	}
 	else if (character == '\n') {
-		increase_row();
-		current_mem = calculate_point();
+		++current_row;
 	}
 	else {
-		*current_mem++ = character;
-		*current_mem++ = current_attributes;
 
-		increase_column();
+		write_char_pos(character, current_attributes, current_row, current_column);
+
+		++current_column;
 	}
 }
 
@@ -71,6 +110,8 @@ void vga::write_text(const char* text) {
 }
 
 void vga::clear() {
-	word value = (current_attributes << 8) | ' ';
-	std::mem::set<word>((word*)video_memory, value, cells);
-}
+	std::mem::set<character_cell>(
+		VIDEO_MEMORY,
+		default_clear_value,
+		cells);
+} 

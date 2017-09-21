@@ -1,6 +1,8 @@
 PROJECT_NAME := operating-system
 CC        := g++
-ASM       := nasm -f elf 
+CFLAGS    := -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -masm=intel  -nostdlib
+ASM       := nasm
+ASM_FLAGS := -f elf
 MAP_FILE  := obj/$(PROJECT_NAME).m
 LINKER    := ld -T linker.ld -Map $(MAP_FILE)
 SRCDIR    := source
@@ -14,13 +16,14 @@ ASM_OBJS  := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(addsuffix .asmo,$(basename $
 HEDEARS   := $(shell find $(HEADERDIR) -type f -name *.h*)
 OBJECTS   := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(addsuffix .o,$(basename $(SOURCES))))
 DEPS      := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(addsuffix .d,$(basename $(SOURCES))))
-CFLAGS    := -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -masm=intel  -nostdlib
 LIB       := 
 INC       := -I $(HEADERDIR) -include $(HEADERDIR)/global/global.h
 
-
 all: debug
+pedant: debug
+pedant: CFLAGS += -Wall -Werror
 debug: CFLAGS += -g -O0
+debug: ASM_FLAGS += -F dwarf -g
 debug: $(TARGET)
 release: $(TARGET)
 release: CFLAGS += -O3
@@ -61,7 +64,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c*
 	
 $(BUILDDIR)/%.asmo: $(SRCDIR)/%.asm
 	@mkdir -p $(dir $@) 
-	$(ASM) $< -o $@
+	$(ASM) $(ASM_FLAGS) $< -o $@
 
 
 -include $(DEPS)

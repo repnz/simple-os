@@ -55,6 +55,6 @@ namespace interrupts {
 	
 	void enable();
 
-	void add_handler(dword interrupt_code, interrupt_handler handler);
+	void set_handler(dword interrupt_code, interrupt_handler handler);
 }
 

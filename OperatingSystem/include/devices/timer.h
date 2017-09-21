@@ -1,9 +1,12 @@
 #pragma once
 
-namespace timer {
-	typedef void(*on_tick)();
+namespace devices {
 
-	void initialize(on_tick f);
-	
-	void initialize();
+	namespace timer {
+		typedef void(*on_tick)();
+
+		void initialize(on_tick f);
+
+		void initialize();
+	}
 }

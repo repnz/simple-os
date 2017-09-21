@@ -1,6 +1,6 @@
 #pragma once
 
-namespace screen {
+namespace console {
 	void initialize();
 	void write_text(const char* text);
 	void write_number(dword number, byte base = 10);

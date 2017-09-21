@@ -15,8 +15,9 @@ namespace std {
 		template <typename T>
 		T* set(T* mem, const T& value, int length) {
 			while (length != 0) {
-				*mem++ = value;
-				length--;
+				*mem = value;
+				++mem;
+				--length;
 			}
 
 			return mem;
@@ -46,7 +47,6 @@ namespace std {
 				addr[i] = 0;
 			}
 		}
-
 	}
 
 

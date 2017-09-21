@@ -1,6 +1,8 @@
 #include <memory/heap.h>
-#include <screen.h>
+#include <console.h>
 #include <std/mem.h>
+
+//#define DEBUG_MEMORY_ALLOCATION
 
 namespace memory {
 
@@ -17,19 +19,22 @@ namespace memory {
 	int heap::get_free_index(int number_of_blocks) {
 
 		int end_search = entries_size - number_of_blocks;
-		screen::write_text("start search in [");
-		screen::write_number(_current_index);
-		screen::write_text(", ");
-		screen::write_number(end_search);
-		screen::write_text("] ");
 
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text("start search in [");
+		console::write_number(_current_index);
+		console::write_text(", ");
+		console::write_number(end_search);
+		console::write_text("] ");
+#endif
 		// search from current index to end
 		int free_index = search_free_index(_current_index, end_search, number_of_blocks);
 
 		if (free_index != -1) { return free_index; }
 
-		screen::write_text(" second scan ");
-
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text(" second scan ");
+#endif
 		// search from 0 to current index
 		return search_free_index(0, _current_index, number_of_blocks);
 	}
@@ -51,9 +56,11 @@ namespace memory {
 	void* heap::allocate(dword size) {
 		size += sizeof(word);
 
-		screen::write_text("allocate size=");
-		screen::write_number(size);
-		screen::write_text(" , ");
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text("allocate size=");
+		console::write_number(size);
+		console::write_text(" , ");
+#endif
 
 		word num_of_blocks = 1;
 
@@ -65,21 +72,28 @@ namespace memory {
 			}
 		}
 
-		screen::write_text("num_of_blocks=");
-		screen::write_number(num_of_blocks);
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text("num_of_blocks=");
+		console::write_number(num_of_blocks);
+#endif
 
 		int free_index = get_free_index(num_of_blocks);
-		screen::write_text(" , free_index=");
-		screen::write_number(free_index);
+
+#ifdef DEBUG_MEMORY_ALLOCATION	
+		console::write_text(" , free_index=");
+		console::write_number(free_index);
+#endif
 
 		if (free_index == -1) { return 0; }
 
 		allocate_blocks(free_index, num_of_blocks);
 
-		screen::write_text(", new_current_index=");
-		screen::write_number(_current_index);
-		screen::write_text("\r\n");
-	
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text(", new_current_index=");
+		console::write_number(_current_index);
+		console::write_text("\r\n");
+#endif
+
 		return create_entry(free_index, num_of_blocks);
 	}
 
@@ -102,14 +116,17 @@ namespace memory {
 		word num_of_blocks;
 
 		read_entry_from_address(address, &block_index, &num_of_blocks);
-		
-		screen::write_text("free block_index=");
-		screen::write_number(block_index);
-		screen::write_text(" num_of_blocks=");
-		screen::write_number(num_of_blocks);
+
+#ifdef DEBUG_MEMORY_ALLOCATION
+		console::write_text("free block_index=");
+		console::write_number(block_index);
+		console::write_text(" num_of_blocks=");
+		console::write_number(num_of_blocks);
+#endif
 
 		if (std::mem::has_value(_entries + block_index, false, num_of_blocks)) {
-			screen::write_text("FREE ERROR\r\n");
+			console::write_text("FREE ERROR\r\n");
+			while (true);
 		}
 
 		std::mem::set<bool>(_entries + block_index, false, num_of_blocks);

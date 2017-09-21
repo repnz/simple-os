@@ -109,17 +109,20 @@
     <ClCompile Include="include\cpu.h" />
     <ClCompile Include="source\descriptor_tables\gdt.cpp" />
     <ClCompile Include="source\descriptor_tables\idt.cpp" />
+    <ClCompile Include="source\devices\keyboard.cpp" />
     <ClCompile Include="source\devices\timer.cpp" />
     <ClCompile Include="source\extern_isrs.cpp" />
-    <ClCompile Include="source\format.cpp" />
+    <ClCompile Include="source\std\format.cpp" />
     <ClCompile Include="source\interrupts.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="Makefile" />
     <ClCompile Include="source\devices\vga.cpp" />
+    <ClCompile Include="source\memory\heap.cpp" />
     <ClCompile Include="source\memory\memory.cpp" />
     <ClCompile Include="source\screen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gdbinit" />
     <None Include="linker.ld" />
     <None Include="source\boot.asm" />
     <None Include="build.bat" />
@@ -132,14 +135,15 @@
     <ClInclude Include="include\descriptor_tables\idt.h" />
     <ClInclude Include="include\devices\timer.h" />
     <ClInclude Include="include\extern_isrs.h" />
-    <ClInclude Include="include\format.h" />
+    <ClInclude Include="include\devices\keyboard.h" />
+    <ClInclude Include="include\std\format.h" />
     <ClInclude Include="include\global\global.h" />
-    <ClInclude Include="include\io.h" />
+    <ClInclude Include="include\std\io.h" />
     <ClInclude Include="include\interrupts.h" />
-    <ClInclude Include="include\global\mem.h" />
+    <ClInclude Include="include\std\mem.h" />
     <ClInclude Include="include\devices\vga.h" />
-    <ClInclude Include="include\global\stdint.h" />
-    <ClInclude Include="include\global\attributes.h" />
+    <ClInclude Include="include\std\int.h" />
+    <ClInclude Include="include\std\compiler.h" />
     <ClInclude Include="include\memory\heap.h" />
     <ClInclude Include="include\memory\memory.h" />
     <ClInclude Include="include\screen.h" />

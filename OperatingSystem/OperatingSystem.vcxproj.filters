@@ -48,7 +48,13 @@
     <ClCompile Include="source\screen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\format.cpp">
+    <ClCompile Include="source\memory\heap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\std\format.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\devices\keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,11 +72,9 @@
     <None Include="source\isrs.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include=".gdbinit" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\interrupts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,19 +90,10 @@
     <ClInclude Include="include\descriptor_tables\descriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\global\attributes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\global\stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\global\global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\extern_isrs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\global\mem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\devices\timer.h">
@@ -107,13 +102,28 @@
     <ClInclude Include="include\screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\format.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\memory\memory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\memory\heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\std\mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\std\int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\std\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\std\format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\std\compiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\devices\keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

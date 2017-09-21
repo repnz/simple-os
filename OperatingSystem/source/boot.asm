@@ -33,11 +33,12 @@ fix_cs_register:
 	mov si, load_msg
 	call print_string
 	
+	call reset_disk_drive
+
 	mov cl, __kernel_start_sector__
 	mov al, __kernel_sectors_length__
 	mov bx, __kernel_memory_start__
 
-	call reset_disk_drive
 	call load_sectors
 
 	jmp move_to_protected_jump
@@ -49,7 +50,7 @@ reset_disk_drive:
 	jnc .done
 	mov si, error_reset_disk
 	call print_string
-.done
+.done:
 	ret
 
 load_sectors: ; cl = sector number, al = number of sectors to load, es:bx address to load
