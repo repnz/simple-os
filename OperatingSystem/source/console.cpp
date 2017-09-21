@@ -1,8 +1,7 @@
-#include <console.h>
 #include <devices/vga.h>
 #include <devices/keyboard.h>
 #include <std/format.h>
-
+#include <console.h>
 
 void keyboard_handler(byte scan_code, bool released) {
 	if (released) {

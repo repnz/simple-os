@@ -9,6 +9,7 @@ namespace devices {
 		void write_char(char character);
 		void write_text(const char* text);
 		void scroll_down(byte lines);
+		void scroll_up(byte lines);
 		void clear();
 	}
 }

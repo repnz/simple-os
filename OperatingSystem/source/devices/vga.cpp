@@ -60,14 +60,26 @@ void vga::scroll_down(byte lines) {
 		);
 }
 
+void vga::scroll_up(byte lines) {
+	int scroll_cells = (lines * width);
+
+	std::mem::reverse_copy<character_cell>(
+			VIDEO_MEMORY+scroll_cells,
+			VIDEO_MEMORY,
+			cells - scroll_cells
+		);
+
+	std::mem::set<character_cell>(
+		VIDEO_MEMORY, 
+		default_clear_value,
+		scroll_cells
+	);
+}
+
 inline void write_char_pos(char character, byte attr, byte row, byte column) {
 	character_cell* c = calculate_point(row, column);
 	c->attributes = attr;
 	c->value = character;
-}
-
-void check_height() {
-	
 }
 
 void vga::write_char(char character) {
@@ -102,7 +114,6 @@ void vga::write_char(char character) {
 }
 
 void vga::write_text(const char* text) {
-
 	while (*text != 0) {
 		write_char(*text);
 		++text;

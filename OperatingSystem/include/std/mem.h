@@ -13,6 +13,15 @@ namespace std {
 		}
 
 		template <typename T>
+		T* reverse_copy(T* dest, const T* src, int length) {
+			for (int i = length - 1; i >= 0; --i) {
+				dest[i] = src[i];
+			}
+
+			return dest;
+		}
+
+		template <typename T>
 		T* set(T* mem, const T& value, int length) {
 			while (length != 0) {
 				*mem = value;

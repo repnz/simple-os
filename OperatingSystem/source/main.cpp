@@ -26,8 +26,10 @@ This entry is called after booting and moving to protected mode
 GLOBAL void kernel_entry() {
 	initialize();
 
-	for (int i = 0; i < vga::height + 5; ++i) {
+	for (int i = 0; i < vga::height; ++i) {
 		console::write_number(i);
 		console::write_line();
 	}
+
+	vga::scroll_up(2);
 }
