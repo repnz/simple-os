@@ -2,7 +2,7 @@
 global start
 
 ; linker variables
-extern __stack_start__
+extern __kernel_stack_start__
 extern __kernel_start_sector__
 extern __kernel_sectors_length__
 extern __kernel_memory_start__
@@ -27,8 +27,8 @@ fix_cs_register:
 	mov fs, ax
 	mov gs, ax
 
-	mov sp, __stack_start__
-	mov bp, __stack_start__
+	mov sp, __kernel_stack_start__
+	mov bp, __kernel_stack_start__
 	
 	mov si, load_msg
 	call print_string
@@ -111,8 +111,8 @@ protected_mode_initialize: ; cs=0x08 to index GDT_CODE
 	mov gs, ax
 	mov fs, ax
 	
-	mov esp, __stack_start__
-	mov ebp, __stack_start__
+	mov esp, __kernel_stack_start__
+	mov ebp, __kernel_stack_start__
 
 	call kernel_entry
 	jmp $

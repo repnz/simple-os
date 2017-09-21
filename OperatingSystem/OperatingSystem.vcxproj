@@ -107,11 +107,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\cpu.h" />
+    <ClCompile Include="source\cpu.cpp" />
     <ClCompile Include="source\descriptor_tables\gdt.cpp" />
     <ClCompile Include="source\descriptor_tables\idt.cpp" />
     <ClCompile Include="source\devices\keyboard.cpp" />
     <ClCompile Include="source\devices\timer.cpp" />
     <ClCompile Include="source\extern_isrs.cpp" />
+    <ClCompile Include="source\threading\mutex.cpp" />
+    <ClCompile Include="source\threading\scheduler.cpp" />
     <ClCompile Include="source\std\format.cpp" />
     <ClCompile Include="source\interrupts.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -119,7 +122,7 @@
     <ClCompile Include="source\devices\vga.cpp" />
     <ClCompile Include="source\memory\heap.cpp" />
     <ClCompile Include="source\memory\memory.cpp" />
-    <ClCompile Include="source\screen.cpp" />
+    <ClCompile Include="source\console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gdbinit" />
@@ -136,6 +139,7 @@
     <ClInclude Include="include\devices\timer.h" />
     <ClInclude Include="include\extern_isrs.h" />
     <ClInclude Include="include\devices\keyboard.h" />
+    <ClInclude Include="include\std\array_list.h" />
     <ClInclude Include="include\std\format.h" />
     <ClInclude Include="include\global\global.h" />
     <ClInclude Include="include\std\io.h" />
@@ -146,7 +150,10 @@
     <ClInclude Include="include\std\compiler.h" />
     <ClInclude Include="include\memory\heap.h" />
     <ClInclude Include="include\memory\memory.h" />
-    <ClInclude Include="include\screen.h" />
+    <ClInclude Include="include\console.h" />
+    <ClInclude Include="include\threading\mutex.h" />
+    <ClInclude Include="include\threading\scheduler.h" />
+    <ClInclude Include="source\cpu.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

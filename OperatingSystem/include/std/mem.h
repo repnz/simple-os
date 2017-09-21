@@ -56,6 +56,11 @@ namespace std {
 				addr[i] = 0;
 			}
 		}
+
+		template <typename T>
+		void zero(T* mem) {
+			zero<T>(mem, 1);
+		}
 	}
 
 

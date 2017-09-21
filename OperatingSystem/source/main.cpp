@@ -4,32 +4,42 @@
 #include <console.h>
 #include <std/compiler.h>
 #include <devices/vga.h>
+#include <threading/scheduler.h>
+#include <cpu.h>
 
 using namespace devices;
 
-void initialize() {
-	
-	interrupts::initialize();
-	memory::initialize();
-
-	console::initialize();
-	console::clear(); 
-
-	devices::timer::initialize();
-
-	interrupts::enable();
-}
+void thread1();
+void thread2();
 
 /*
 This entry is called after booting and moving to protected mode
 */
 GLOBAL void kernel_entry() {
-	initialize();
 
-	for (int i = 0; i < vga::height; ++i) {
-		console::write_number(i);
-		console::write_line();
+	interrupts::initialize();
+	memory::initialize();
+
+	console::initialize();
+	console::clear();
+
+	threading::scheduler::initialize();
+	threading::scheduler::create_thread(thread1);
+	threading::scheduler::create_thread(thread2);
+
+	interrupts::enable();
+
+	while (true);
+}
+
+void thread1() {
+	while (true){
+		console::write_char('A');
 	}
+}
 
-	vga::scroll_up(2);
+void thread2() {
+	while (true){
+		console::write_char('B');
+	}
 }

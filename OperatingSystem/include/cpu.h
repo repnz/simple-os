@@ -1,6 +1,7 @@
 #pragma once
 
 namespace cpu {
+	extern "C" dword get_flags();
 
 	namespace flags {
 		const dword carry = 0x1;

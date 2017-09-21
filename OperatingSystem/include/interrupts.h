@@ -53,7 +53,13 @@ namespace interrupts {
 
 	void initialize();
 	
-	void enable();
+	inline void enable(){
+		ASM_VOLATILE("sti");
+	}
+
+	inline void disable() {
+		ASM_VOLATILE("cli");
+	}
 
 	void set_handler(dword interrupt_code, interrupt_handler handler);
 }

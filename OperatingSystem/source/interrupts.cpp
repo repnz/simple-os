@@ -74,10 +74,6 @@ void interrupts::initialize() {
 	irq_install();
 }
 
-void interrupts::enable() {
-	ASM_VOLATILE("sti");
-}
-
 void interrupts::set_handler(dword interrupt_code, interrupt_handler handler) {
 	interrupt_handlers[interrupt_code] = handler;
 }
@@ -87,12 +83,13 @@ inline bool is_irq(byte int_no) {
 }
 
 GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
-
+	
 	if (interrupt_handlers[frame.int_no] != 0) {
-		interrupt_handlers[frame.int_no](frame);		
-
-		if (is_irq(frame.int_no)) {
-			if (frame.int_no >= 40)
+		byte int_no = frame.int_no;
+		interrupt_handlers[int_no](frame);		
+		
+		if (is_irq(int_no)) {
+			if (int_no >= 40)
 			{
 				// send eoi to slave interrupt
 				outb(0xA0, 0x20); 
