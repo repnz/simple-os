@@ -27,23 +27,38 @@ debug: ASM_FLAGS += -F dwarf -g
 debug: $(TARGET)
 release: $(TARGET)
 release: CFLAGS += -O3
+release: $(LINKER) += -flto 
 
 GREEN=`tput setaf 2`
+BLUE=`tput setaf 4`
+RED=`tput setaf 2`
 RESET=`tput sgr0`
 
-define print_green
-	@echo "$(GREEN)$(1)$(RESET)"
+define set_color 
+	@echo -n "$(1)"
 endef
+
+define reset_color
+	@echo -n "$(RESET)"
+endef
+
+define print_colored
+	@echo "$(1)$(2)$(RESET)"
+endef
+
 
 all: $(TARGET)
 
 clean:
 	rm $(BUILDDIR) $(BINDIR) -rf
 
+
 $(TARGET): $(BINDIR) $(BUILDDIR) $(ASM_OBJS) $(OBJECTS)
-	$(call print_green,"Linking object files...")
+	$(call print_colored,$(BLUE),"[+] Linking object files...")
 	@$(LINKER) $(ASM_OBJS) $(OBJECTS) -o $(TARGET) $(LIB)
-	$(call print_green,"$(TARGET) has been created!")
+	$(call print_colored,$(GREEN),"[+] $(TARGET) has been created!")
+
+
 
 $(MAP_FILE): $(TARGET)
 	
@@ -55,7 +70,8 @@ $(BINDIR):
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c*
 	@mkdir -p $(dir $@) 
-	$(CC) $(CFLAGS) $(INC) -c -o $@ $< 
+	@echo "[+] compiling $<..."
+	@$(CC) $(CFLAGS) $(INC) -c -o $@ $< 
 	@$(CC) $(CFLAGS) $(INC) -M $< -MT $@ > $(@:.o=.td) 
 	@cp $(@:.o=.td) $(@:.o=.d); 
 	@sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
@@ -64,9 +80,10 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c*
 	
 $(BUILDDIR)/%.asmo: $(SRCDIR)/%.asm
 	@mkdir -p $(dir $@) 
-	$(ASM) $(ASM_FLAGS) $< -o $@
+	@echo [+] assembling $<
+	@$(ASM) $(ASM_FLAGS) $< -o $@
 
 
 -include $(DEPS)
 
-.PHONY: clean all
+.PHONY: clean all debug release
