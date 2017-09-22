@@ -60,6 +60,10 @@ void scheduler::thread_exit() {
 	interrupts::enable();
 }
 
+mutex scheduler::create_mutex() {
+	
+}
+
 void context_switch(interrupts::interrupt_frame& frame) {
 	_threads[_index].frame = frame;
 	_index = (_index + 1) % _current_length;

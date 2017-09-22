@@ -5,6 +5,7 @@
 #include <std/compiler.h>
 #include <devices/vga.h>
 #include <threading/scheduler.h>
+#include <threading/atomic_bool.h>
 #include <cpu.h>
 
 using namespace devices;
@@ -23,6 +24,18 @@ GLOBAL void kernel_entry() {
 	console::initialize();
 	console::clear();
 
+	
+	threading::atomic_bool b;
+
+	if (!b.test_and_set()) {
+		console::write_text("hello world");
+	}
+
+	if (b.test_and_set()) {
+		console::write_text("yay bitch");
+	}
+
+	while (true);
 	threading::scheduler::initialize();
 	threading::scheduler::create_thread(thread1);
 	threading::scheduler::create_thread(thread2);
