@@ -18,12 +18,11 @@ SECTIONS
 	
 	.text :
 	{
-    __kernel_memory_start__ = .;
-	__code_start__ = .;
+    __kernel_code_start__ = .;
     *(.text)
     *(.rodata)
 	. = ALIGN(512);
-	__code_end__ = .;
+	__kernel_code_end__ = .;
 	} 
 	
   .data :
@@ -34,8 +33,13 @@ SECTIONS
 	__data_end__ = .;
   }
 
-  __kernel_sectors_length__ = ((. - __kernel_memory_start__) / 512);
+  __kernel_sectors_length__ = ((. - __kernel_code_start__) / 512);
 
+  __kernel_stack_start__ = . + 0x2000;
+  __threads_stack_start__ = . + 0x10000;
+  __dynamic_memory_start__ = . + 0x4;
+  __dynamic_memory_end = . + 0x10000;
+  
   .bss :
   {
 	
@@ -45,8 +49,4 @@ SECTIONS
 	__bss_end__ = .;
   }
 
-  __kernel_stack_start__ = __bss_end__ + 0x2000;
-  __threads_stack_start__ = __kernel_stack_start__ + 0x10000;
-  __dynamic_memory_start__ = . + 0x4;
-  
 }

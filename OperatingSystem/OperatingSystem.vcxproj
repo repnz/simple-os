@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -113,7 +113,7 @@
     <ClCompile Include="source\devices\keyboard.cpp" />
     <ClCompile Include="source\devices\timer.cpp" />
     <ClCompile Include="source\extern_isrs.cpp" />
-    <ClCompile Include="source\threading\mutex.cpp" />
+    <ClCompile Include="source\threading\atomic_bool.cpp" />
     <ClCompile Include="source\threading\scheduler.cpp" />
     <ClCompile Include="source\std\format.cpp" />
     <ClCompile Include="source\interrupts.cpp" />
@@ -126,11 +126,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gdbinit" />
+    <None Include="gdb\connect.py" />
+    <None Include="gdb\map_load.py" />
     <None Include="linker.ld" />
     <None Include="source\boot.asm" />
     <None Include="build.bat" />
     <None Include="source\isrs.asm" />
     <None Include="source\descriptor_tables\descriptors.asm" />
+    <None Include="source\threading\scheduler.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\descriptor_tables\descriptor.h" />
@@ -151,6 +154,7 @@
     <ClInclude Include="include\memory\heap.h" />
     <ClInclude Include="include\memory\memory.h" />
     <ClInclude Include="include\console.h" />
+    <ClInclude Include="include\threading\atomic_bool.h" />
     <ClInclude Include="include\threading\mutex.h" />
     <ClInclude Include="include\threading\scheduler.h" />
     <ClInclude Include="source\cpu.asm" />

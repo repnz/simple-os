@@ -34,7 +34,7 @@ const char* exception_messages[] =
 	"Machine Check"
 };
 
-interrupts::interrupt_handler interrupt_handlers[255];
+interrupts::interrupt_handler interrupt_handlers[48];
 
 void irq_install(){
 	// call initialize cw1_init with future cw4
@@ -61,11 +61,11 @@ void irq_install(){
 }
 
 void interrupts::initialize() {
-	std::mem::zero<interrupt_handler>(interrupt_handlers, 255);
+	std::mem::zero<interrupt_handler>(interrupt_handlers, 48);
 
 	descriptor_tables::idt::clear();
 
-	for (word i = 0; i < 255; ++i) {
+	for (word i = 0; i < 48; ++i) {
 		void* addr = get_extern_address(i);
 		descriptor_tables::idt::set_entry(i, addr, 0x8);
 	}

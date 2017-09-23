@@ -16,7 +16,7 @@ void thread2();
 /*
 This entry is called after booting and moving to protected mode
 */
-GLOBAL void kernel_entry() {
+GLOBAL void kmain() {
 
 	interrupts::initialize();
 	memory::initialize();
@@ -24,18 +24,6 @@ GLOBAL void kernel_entry() {
 	console::initialize();
 	console::clear();
 
-	
-	threading::atomic_bool b;
-
-	if (!b.test_and_set()) {
-		console::write_text("hello world");
-	}
-
-	if (b.test_and_set()) {
-		console::write_text("yay bitch");
-	}
-
-	while (true);
 	threading::scheduler::initialize();
 	threading::scheduler::create_thread(thread1);
 	threading::scheduler::create_thread(thread2);
@@ -45,14 +33,23 @@ GLOBAL void kernel_entry() {
 	while (true);
 }
 
-void thread1() {
-	while (true){
-		console::write_char('A');
+void function(const char* text_to_print) {
+	while (true) {
+		interrupts::disable();
+
+		console::write_text(text_to_print);
+		console::write_text(" is running!!\r\n");
+		
+		for (int i=0; i<10000; ++i){}
+
+		interrupts::enable();
 	}
 }
 
+void thread1() {
+	function(" A ");
+}
+
 void thread2() {
-	while (true){
-		console::write_char('B');
-	}
+	function(" B ");
 }

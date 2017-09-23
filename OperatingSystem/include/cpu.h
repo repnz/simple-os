@@ -1,6 +1,11 @@
 #pragma once
+#include <std/compiler.h>
 
 namespace cpu {
+	struct general_registers {
+		dword edi, esi, ebp, esp, ebx, edx, ecx, eax; // Order of pusha
+	} PACKED;
+
 	extern "C" dword get_flags();
 
 	namespace flags {

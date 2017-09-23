@@ -8,7 +8,6 @@ namespace threading {
 		void initialize();
 		void create_thread(thread_function f);
 		void thread_exit();
-		mutex create_mutex();
 	}
 }
 

@@ -1,10 +1,10 @@
 #pragma once
 #include <std/compiler.h>
+#include <cpu.h>
 
 namespace interrupts {
 	struct interrupt_frame {
-		dword ds;                  // Data segment selector
-		dword edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha.
+		cpu::general_registers regs;    // Pushed by pusha
 		dword int_no, err_code;    // Interrupt number and error code (if applicable)
 		dword eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
 	} PACKED;

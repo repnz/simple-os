@@ -9,5 +9,7 @@ namespace threading {
 		}
 
 		bool test_and_set();
+
+		void clear();
 	};
 }

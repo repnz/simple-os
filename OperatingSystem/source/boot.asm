@@ -5,10 +5,10 @@ global start
 extern __kernel_stack_start__
 extern __kernel_start_sector__
 extern __kernel_sectors_length__
-extern __kernel_memory_start__
+extern __kernel_code_start__
 
 ; kernel variables
-extern kernel_entry
+extern kmain
 
 ; gdt.asm variables
 extern gdt_descriptor
@@ -37,7 +37,7 @@ fix_cs_register:
 
 	mov cl, __kernel_start_sector__
 	mov al, __kernel_sectors_length__
-	mov bx, __kernel_memory_start__
+	mov bx, __kernel_code_start__
 
 	call load_sectors
 
@@ -114,7 +114,7 @@ protected_mode_initialize: ; cs=0x08 to index GDT_CODE
 	mov esp, __kernel_stack_start__
 	mov ebp, __kernel_stack_start__
 
-	call kernel_entry
+	call kmain
 	jmp $
 
 load_msg db "Loading Kernel..", 10, 13, 0
