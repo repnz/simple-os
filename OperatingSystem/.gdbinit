@@ -1,5 +1,6 @@
 set disassembly intel
 source gdb/map_load.py
+source gdb/connect.py
 map-load obj/operating-system.m
-target remote 10.0.0.8:1234
+connect 10.0.0.8
 
