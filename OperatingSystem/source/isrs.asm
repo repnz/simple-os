@@ -1,7 +1,16 @@
 [bits 32]
+section .data
+
+temp_eip dd 0
+temp_esp dd 0
+temp_eax dd 0
+
+section .text
+
+
+%macro ISR_NOERRCODE 1
 ; This macro creates a stub for an ISR which does NOT pass it's own
 ; error code (adds a dummy errcode byte).
-%macro ISR_NOERRCODE 1
 global isr%1
   isr%1:
     cli                         ; Disable interrupts firstly.
@@ -9,10 +18,9 @@ global isr%1
     push dword %1                ; Push the interrupt number.
     jmp isr_common_stub         ; Go to our common handler code.
 %endmacro
-
+%macro ISR_ERRCODE 1
 ; This macro creates a stub for an ISR which passes it's own
 ; error code.
-%macro ISR_ERRCODE 1
   global isr%1
   isr%1:
     cli                         ; Disable interrupts.
@@ -21,19 +29,49 @@ global isr%1
 %endmacro
 
 extern isr_handler
+
 global isr_common_stub
 ; This is our common ISR stub. It saves the processor state, sets
 ; up for kernel mode segments, calls the C-level fault handler,
 ; and finally restores the stack frame.
 isr_common_stub:
-    pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
-    
+    pushad                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+  
 	call isr_handler
+	
+	popad
+	add esp, 8
 
-    popa					 ; Pops edi,esi,ebp...
-    add esp, 8     ; Cleans up the pushed error code and pushed ISR number
-    sti
-    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+	iret
+
+	; take esp to temp
+	;mov eax, dword [esp+3*4] 
+	;mov dword [temp_esp], eax 
+
+	; restore all registers
+	;popad
+
+	; save eax in temp
+	;mov dword [temp_eax], eax
+
+	; clear the interrupt number and exception code
+	;add esp, 8 
+
+	; save eip in the side
+	;pop dword [temp_eip]
+	
+	;pop eax
+	
+	; restore eflags, FROM HERE ON DONT CHANGE FLAGS
+	;popfd
+
+	;mov eax, dword [temp_eax]
+	;mov esp, dword [temp_esp]
+
+	; enable interrupts again
+	;sti
+
+	;jmp dword [temp_eip]
 
 
 ISR_NOERRCODE 0

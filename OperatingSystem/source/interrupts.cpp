@@ -83,7 +83,6 @@ inline bool is_irq(byte int_no) {
 }
 
 GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
-	
 	if (interrupt_handlers[frame.int_no] != 0) {
 		byte int_no = frame.int_no;
 		interrupt_handlers[int_no](frame);		
@@ -104,14 +103,20 @@ GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 		console::write_text("caught exception: ");
 		console::write_text(exception_messages[frame.int_no]);
 		console::write_char(' ');
-		console::write_text(" ");
-		console::write_number(frame.eip, 16);
+		console::write_text("in 0x");
+		console::write_number(frame.eip);
+		console::write_line();
 		while (true);
 	}
 	else {
 		console::write_text("cannot handle interrupt ");
 		console::write_number(frame.int_no);
 		console::write_char(' ');
+		console::write_text("in 0x");
+		console::write_number(frame.eip);
+		console::write_line();
+
 		while (true);
 	}
+
 }

@@ -23,14 +23,17 @@ GLOBAL void kmain() {
 
 	console::initialize();
 	console::clear();
+	timer::initialize();
 
-	threading::scheduler::initialize();
-	threading::scheduler::create_thread(thread1);
-	threading::scheduler::create_thread(thread2);
+	//threading::scheduler::initialize();
+	//threading::scheduler::create_thread(thread1);
+	//threading::scheduler::create_thread(thread2);
 
 	interrupts::enable();
 
-	while (true);
+	while (true){
+		console::write_text("hello world");
+	}
 }
 
 void function(const char* text_to_print) {
@@ -40,8 +43,6 @@ void function(const char* text_to_print) {
 		console::write_text(text_to_print);
 		console::write_text(" is running!!\r\n");
 		
-		for (int i=0; i<10000; ++i){}
-
 		interrupts::enable();
 	}
 }

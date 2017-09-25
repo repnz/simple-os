@@ -10,6 +10,7 @@ using namespace threading;
 extern dword __threads_stack_start__;
 
 
+
 struct thread_state {
 	int id; 
 	cpu::general_registers regs;
@@ -32,6 +33,8 @@ static void context_switch(interrupts::interrupt_frame& frame);
 void scheduler::initialize() {
 	std::mem::zero<thread_state>(_threads, MAX_THREADS);
 	_running_thread_index = 0;
+	current_thread_state = &_threads[0];
+
 	_next_id = 1;
 	_current_length = 1;
 	_next_stack_pointer = (dword)&__threads_stack_start__;
@@ -42,7 +45,7 @@ void scheduler::initialize() {
 
 void scheduler::create_thread(thread_function f) {
 	_threads[_current_length].id = _next_id++;
-	_threads[_current_length].regs.ebp = _next_stack_pointer;
+	_threads[_current_length].regs.ebp = _next_stack_pointer+0x100;
 	_threads[_current_length].regs.esp = _next_stack_pointer;
 	_threads[_current_length].eip = (dword)f;
 	_threads[_current_length].eflags = cpu::get_flags() | cpu::flags::interrupt_enable;
@@ -68,11 +71,32 @@ void scheduler::thread_exit() {
 	- sets eip to the current thread
 
 */
-extern "C" void restore_thread_state();
 
+
+#define DEBUG_CONTEXT_SWITCH
+
+inline static void save_thread_state(const interrupts::interrupt_frame& frame) {
+	current_thread_state->regs = frame.regs;
+	current_thread_state->eip = frame.eip;
+	current_thread_state->eflags = frame.eflags;
+}
+
+inline static void find_next_thread() {
+	_running_thread_index = (_running_thread_index + 1) % _current_length;
+	current_thread_state = &_threads[_running_thread_index];
+}
+
+inline static void restore_thread_state(interrupts::interrupt_frame& frame) {
+	frame.regs = current_thread_state->regs;
+	frame.eip = current_thread_state->eip;
+	frame.eflags = current_thread_state->eflags;
+}
 
 static void context_switch(interrupts::interrupt_frame& frame) {
 	
+	save_thread_state(frame);
+
+#ifdef DEBUG_CONTEXT_SWITCH
 	console::write_text("now: esp=0x");
 	console::write_number(frame.regs.esp, 16);
 
@@ -81,28 +105,19 @@ static void context_switch(interrupts::interrupt_frame& frame) {
 
 	console::write_text(" index=");
 	console::write_number(_running_thread_index);
+#endif
 
+	find_next_thread();
 
-	// save thread state
-	_threads[_running_thread_index].regs = frame.regs;
-	_threads[_running_thread_index].regs.esp += 20;
-	_threads[_running_thread_index].eip = frame.eip;
-	_threads[_running_thread_index].eflags = frame.eflags;
-
-	// increase thread index 
-	_running_thread_index = (_running_thread_index + 1) % _current_length;
-	current_thread_state = &_threads[_running_thread_index];
-
+#ifdef DEBUG_CONTEXT_SWITCH
 	console::write_text("   next: esp=0x");
 	console::write_number(current_thread_state->regs.esp, 16);
 
 	console::write_text(" ebp=0x");
 	console::write_number(current_thread_state->regs.ebp, 16);
 	console::write_line();
+#endif
 
-	// set eip to 'after_iret'
-	frame.eip = (dword)restore_thread_state;
-
-	// set esp of after iret to kernel stack 
-	frame.useresp = _threads[0].regs.esp;
+	restore_thread_state(frame);
+	
 }
