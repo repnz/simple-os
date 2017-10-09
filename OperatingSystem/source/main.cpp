@@ -1,3 +1,4 @@
+
 #include <devices/timer.h>
 #include <interrupts.h>
 #include <memory/memory.h>
@@ -7,11 +8,10 @@
 #include <threading/scheduler.h>
 #include <threading/atomic_bool.h>
 #include <cpu.h>
+#include <devices/keyboard.h>
 
 using namespace devices;
 
-void thread1();
-void thread2();
 
 /*
 This entry is called after booting and moving to protected mode
@@ -25,32 +25,26 @@ GLOBAL void kmain() {
 	console::clear();
 	timer::initialize();
 
-	//threading::scheduler::initialize();
-	//threading::scheduler::create_thread(thread1);
-	//threading::scheduler::create_thread(thread2);
+	if (keyboard::echo() == keyboard::results::echo) {
+		console::write_text("ECHO SCCUESS!\r\n");
+	}
+
+	byte set = keyboard::get_scan_code_set();
+
+	console::write_text("0x");
+	console::write_number(set, 16);
+	console::write_line();
+
+
+	keyboard::set_scan_code_set(1);
+
+	set = keyboard::get_scan_code_set();
+
+	console::write_text("0x");
+	console::write_number(set, 16);
+	console::write_line();
 
 	interrupts::enable();
 
-	while (true){
-		console::write_text("hello world");
-	}
-}
-
-void function(const char* text_to_print) {
-	while (true) {
-		interrupts::disable();
-
-		console::write_text(text_to_print);
-		console::write_text(" is running!!\r\n");
-		
-		interrupts::enable();
-	}
-}
-
-void thread1() {
-	function(" A ");
-}
-
-void thread2() {
-	function(" B ");
+	while (true);
 }

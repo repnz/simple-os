@@ -5,10 +5,7 @@
 
 void keyboard_handler(byte scan_code, bool released) {
 	if (released) {
-		console::write_text("Released!\r\n");
-	}
-	else {
-		console::write_text("Pressed!\r\n");
+		console::write_char(scan_code);
 	}
 }
 

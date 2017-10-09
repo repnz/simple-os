@@ -63,7 +63,7 @@
     <ClCompile Include="source\threading\scheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\threading\mutex.cpp">
+    <ClCompile Include="source\threading\atomic_bool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -82,6 +82,8 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include=".gdbinit" />
+    <None Include="gdb\connect.py" />
+    <None Include="gdb\map_load.py" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\interrupts.h">
@@ -145,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\threading\mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\threading\atomic_bool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

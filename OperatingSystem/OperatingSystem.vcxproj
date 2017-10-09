@@ -133,7 +133,6 @@
     <None Include="build.bat" />
     <None Include="source\isrs.asm" />
     <None Include="source\descriptor_tables\descriptors.asm" />
-    <None Include="source\threading\scheduler.asm" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\descriptor_tables\descriptor.h" />

@@ -105,6 +105,9 @@ void vga::write_char(char character) {
 	else if (character == '\n') {
 		++current_row;
 	}
+	else if (character == '\t') {
+		for (int i = 0; i < 4; ++i) write_char(' ');
+	}
 	else {
 
 		write_char_pos(character, current_attributes, current_row, current_column);
