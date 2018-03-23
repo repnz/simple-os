@@ -5,7 +5,8 @@
 
 using namespace descriptor_tables;
 
-struct internal_idt_entry {
+struct internal_idt_entry 
+{
 	word func_low; // offset bits 0..15
 	word selector; // a code segment selector in GDT or LDT
 	byte zero;      // unused, set to 0
@@ -14,7 +15,8 @@ struct internal_idt_entry {
 } PACKED;
 
 
-extern "C" {
+extern "C" 
+{
 	extern void idt_flush(descriptor* d);
 }
 

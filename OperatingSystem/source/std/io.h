@@ -3,14 +3,15 @@
 //#define DEBUG_IO
 
 #ifdef DEBUG_IO 
-#include <console.h>
+#include <text_mode/console.h>
 #endif
 
 /* Port 0x80 is used for 'checkpoints' during POST. */
 /* The Linux kernel seems to think it is free for use :-/ */
 const word wait_port = 0x80;
 
-inline byte inb(word port) {
+inline byte inb(word port) 
+{
 	byte result;
 
 #ifdef DEBUG_IO 
@@ -28,7 +29,8 @@ inline byte inb(word port) {
 	return result;
 }
 
-inline void outb(word port, byte data) {
+inline void outb(word port, byte data) 
+{
 #ifdef DEBUG_IO 
 	console::write_text("outb port=0x");
 	console::write_number(port, 16);
@@ -44,12 +46,14 @@ inline void outb(word port, byte data) {
 		);
 }
 
-inline void io_wait(void) {
+inline void io_wait() 
+{
 	outb(wait_port, 0);
 }
 
 
-inline void outb_wait(word port, byte data) {
+inline void outb_wait(word port, byte data) 
+{
 	outb(port, data);
 	io_wait();
 }

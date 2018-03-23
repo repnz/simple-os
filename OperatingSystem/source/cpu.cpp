@@ -1,5 +1,6 @@
 #include <cpu.h>
 
-namespace cpu {
+namespace cpu 
+{
 
 }

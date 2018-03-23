@@ -1,33 +1,40 @@
 #include <devices/timer.h>
 #include <interrupts.h>
 
-using namespace devices;
+using devices::timer_device;
 
 dword system_timer;
-timer::on_tick tick_function;
+void(*tick_function)();
 
-void timer_handler(interrupts::interrupt_frame& frame);
-void no_timer_handler(interrupts::interrupt_frame& frame);
+const dword ticks_per_second = 18;
 
-void timer::initialize(timer::on_tick f) {
+static void timer_handler(interrupts::interrupt_frame& frame);
+static void no_timer_handler(interrupts::interrupt_frame& frame);
+
+void timer_device::ignore()
+{
+	interrupts::ignore(interrupts::irqs::timer);
+}
+
+void timer_device::set_handler(void(*on_tick)())
+{
 	system_timer = 0;
-	tick_function = f;
+	tick_function = on_tick;
 	interrupts::set_handler(interrupts::irqs::timer, timer_handler);
 }
 
-void timer::initialize() {
-	system_timer = 0;
-	interrupts::set_handler(interrupts::irqs::timer, no_timer_handler);
-}
 
-void timer_handler(interrupts::interrupt_frame& frame) {
+static void timer_handler(interrupts::interrupt_frame& frame)
+{
 	system_timer++;
 	
-	if (system_timer % 18 == 0) {
+	if (system_timer % ticks_per_second == 0)
+	{
 		tick_function();
 	}
 }
 
-void no_timer_handler(interrupts::interrupt_frame& frame) {
+static void no_timer_handler(interrupts::interrupt_frame& frame)
+{
 	system_timer++;
 }

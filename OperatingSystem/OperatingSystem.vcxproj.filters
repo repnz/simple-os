@@ -36,9 +36,6 @@
     <ClCompile Include="source\extern_isrs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\cpu.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\devices\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,24 +51,21 @@
     <ClCompile Include="source\devices\keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\console.cpp">
+    <ClCompile Include="source\threading\scheduler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\text_mode\console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\threading\scheduler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\threading\atomic_bool.cpp">
+    <ClCompile Include="source\cpu.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="source\boot.asm">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="build.bat">
       <Filter>Source Files</Filter>
     </None>
     <None Include="linker.ld" />
@@ -86,70 +80,64 @@
     <None Include="gdb\map_load.py" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\interrupts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\descriptor_tables\idt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\descriptor_tables\gdt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\devices\vga.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\descriptor_tables\descriptor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\global\global.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\extern_isrs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\devices\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\memory\memory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\memory\heap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\mem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\int.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\format.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\compiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\devices\keyboard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\console.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\std\array_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\cpu.asm">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\threading\scheduler.h">
+    <ClInclude Include="source\descriptor_tables\descriptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\threading\mutex.h">
+    <ClInclude Include="source\descriptor_tables\gdt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\threading\atomic_bool.h">
+    <ClInclude Include="source\descriptor_tables\idt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\devices\keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\devices\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\devices\vga.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\global\global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memory\heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\memory\memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\std\compiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\std\format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\std\int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\std\io.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\std\mem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\extern_isrs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\interrupts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\threading\scheduler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\text_mode\cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\text_mode\console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

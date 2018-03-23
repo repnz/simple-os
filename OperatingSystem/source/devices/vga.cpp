@@ -1,131 +1,41 @@
 #include <devices/vga.h>
 #include <std/mem.h>
-#include <std/compiler.h>
+#include <std/io.h>
+#include <text_mode/cell.h>
 
-using namespace devices;
+using devices::vga_device;
 
-#define WHITE_ON_BLACK 0x0f
+#define VIDEO_MEMORY (text_mode::cell*)0xb8000
 
-struct character_cell {
-	character_cell(byte attr, char value) : attributes(attr), value(value){
-	}
-
-	character_cell(){}
-
-	char value;
-	byte attributes;
-
-} PACKED;
-
-const int cells = (vga::width * vga::height);
-
-#define VIDEO_MEMORY (character_cell*)0xb8000
-#define VIDEO_MEMORY_END (VIDEO_MEMORY+cells)
-
-
-static byte current_row;
-static byte current_column;
-
-static character_cell default_clear_value;
-static bool enable_scrolling;
-static byte current_attributes;
-
-void vga::initialize(bool scrolling) {
-	enable_scrolling = scrolling;
-	current_attributes = WHITE_ON_BLACK;
-	default_clear_value = character_cell(current_attributes, ' ');
-
-	current_row = 0;
-	current_column = 0;
+/*
+ * Calculate the index of a cell location in the video memory
+ */
+static int calculate_index(byte row, byte column) 
+{
+	return column + (row * vga_device::width);
 }
 
-static inline character_cell* calculate_point(byte row, byte column) {
-	return VIDEO_MEMORY + (column + (row * vga::width));
+
+text_mode::cell* devices::vga_device::address_of(byte row, byte column)
+{
+	return VIDEO_MEMORY + calculate_index(row, column);
 }
 
-void vga::scroll_down(byte lines) {
-
-	int scroll_cells = (lines * width);
-
-	std::mem::copy<character_cell>(
-		VIDEO_MEMORY,
-		VIDEO_MEMORY + scroll_cells,
-		(height - lines) * width
-		);
-	
-	std::mem::set<character_cell>(
-		VIDEO_MEMORY_END - scroll_cells,
-		default_clear_value,
-		scroll_cells
-		);
-}
-
-void vga::scroll_up(byte lines) {
-	int scroll_cells = (lines * width);
-
-	std::mem::reverse_copy<character_cell>(
-			VIDEO_MEMORY+scroll_cells,
-			VIDEO_MEMORY,
-			cells - scroll_cells
-		);
-
-	std::mem::set<character_cell>(
-		VIDEO_MEMORY, 
-		default_clear_value,
-		scroll_cells
+void vga_device::set_buffer(text_mode::cell* buffer)
+{
+	std::mem::copy<text_mode::cell>(
+		VIDEO_MEMORY, // dest
+		buffer, // src
+		vga_device::width * vga_device::height // length
 	);
 }
 
-inline void write_char_pos(char character, byte attr, byte row, byte column) {
-	character_cell* c = calculate_point(row, column);
-	c->attributes = attr;
-	c->value = character;
+void vga_device::set_cursor(byte row, byte column) 
+{
+	 int buffer_index = calculate_index(row, column);
+
+	outb(0x3D4, 14);
+	outb(0x3D5, buffer_index >> 8);
+	outb(0x3D4, 15);
+	outb(0x3D5, buffer_index);
 }
-
-void vga::write_char(char character) {
-
-	if (current_column >= vga::width) {
-		current_column = 0;
-		++current_row;
-	}
-
-	if (current_row >= vga::height) {
-		if (enable_scrolling) {
-			current_row = vga::height - 1;
-			vga::scroll_down(1);
-		}
-		else {
-			current_row = 0;
-		}
-	}
-
-	if (character == '\r') {
-		current_column = 0;
-	}
-	else if (character == '\n') {
-		++current_row;
-	}
-	else if (character == '\t') {
-		for (int i = 0; i < 4; ++i) write_char(' ');
-	}
-	else {
-
-		write_char_pos(character, current_attributes, current_row, current_column);
-
-		++current_column;
-	}
-}
-
-void vga::write_text(const char* text) {
-	while (*text != 0) {
-		write_char(*text);
-		++text;
-	}
-}
-
-void vga::clear() {
-	std::mem::set<character_cell>(
-		VIDEO_MEMORY,
-		default_clear_value,
-		cells);
-} 

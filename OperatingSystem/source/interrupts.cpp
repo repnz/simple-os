@@ -1,11 +1,13 @@
 #include <interrupts.h>
 #include <descriptor_tables/idt.h>
 #include <extern_isrs.h>
-#include <console.h>
+#include <text_mode/console.h>
 
 #include <std/mem.h>
 #include <std/compiler.h>
 #include <std/io.h>
+
+using text_mode::console;
 
 /* This is a simple string array. It contains the message that
 *  corresponds to each and every exception. We get the correct
@@ -36,7 +38,8 @@ const char* exception_messages[] =
 
 interrupts::interrupt_handler interrupt_handlers[48];
 
-void irq_install(){
+void irq_install()
+{
 	// call initialize cw1_init with future cw4
 	outb_wait(0x20, 0x11);
 	outb_wait(0xA0, 0x11);
@@ -60,13 +63,15 @@ void irq_install(){
 	outb_wait(0xA1, 0x0);
 }
 
-void interrupts::initialize() {
+void interrupts::initialize() 
+{
 	std::mem::zero<interrupt_handler>(interrupt_handlers, 48);
 
 	descriptor_tables::idt::clear();
 
-	for (word i = 0; i < 48; ++i) {
-		void* addr = get_extern_address(i);
+	for (word i = 0; i < 48; ++i) 
+	{
+		void* addr = get_isr_address(i);
 		descriptor_tables::idt::set_entry(i, addr, 0x8);
 	}
 
@@ -74,20 +79,34 @@ void interrupts::initialize() {
 	irq_install();
 }
 
-void interrupts::set_handler(dword interrupt_code, interrupt_handler handler) {
+static void empty_handler(interrupts::interrupt_frame& frame)
+{
+}
+
+void interrupts::ignore(dword interrupt_code)
+{
+	interrupt_handlers[interrupt_code] = empty_handler;
+}
+
+void interrupts::set_handler(dword interrupt_code, interrupt_handler handler)
+{
 	interrupt_handlers[interrupt_code] = handler;
 }
 
-inline bool is_irq(byte int_no) {
+inline bool is_irq(byte int_no)
+{
 	return int_no >= 32 && int_no <= 48;
 }
 
-GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
-	if (interrupt_handlers[frame.int_no] != 0) {
+GLOBAL void isr_handler(interrupts::interrupt_frame frame)
+{
+	if (interrupt_handlers[frame.int_no] != nullptr)
+	{
 		byte int_no = frame.int_no;
 		interrupt_handlers[int_no](frame);		
 		
-		if (is_irq(int_no)) {
+		if (is_irq(int_no))
+		{
 			if (int_no >= 40)
 			{
 				// send eoi to slave interrupt
@@ -99,7 +118,8 @@ GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 			outb(0x20, 0x20);
 		}
 	}
-	else if (frame.int_no <= 18) {
+	else if (frame.int_no <= 18)
+	{
 		console::write_text("caught exception: ");
 		console::write_text(exception_messages[frame.int_no]);
 		console::write_char(' ');
@@ -108,14 +128,14 @@ GLOBAL void isr_handler(interrupts::interrupt_frame frame) {
 		console::write_line();
 		while (true);
 	}
-	else {
+	else
+	{
 		console::write_text("cannot handle interrupt ");
 		console::write_number(frame.int_no);
 		console::write_char(' ');
 		console::write_text("in 0x");
 		console::write_number(frame.eip);
 		console::write_line();
-
 		while (true);
 	}
 

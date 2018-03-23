@@ -72,7 +72,8 @@
     <LibraryPath />
     <LibraryWPath />
     <ExcludePath />
-    <NMakeForcedIncludes>$(ProjectDir)\include\global\global.h;</NMakeForcedIncludes>
+    <NMakeForcedIncludes>$(ProjectDir)\source\global\global.h;</NMakeForcedIncludes>
+    <IncludePath>$(ProjectDir)\source;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeBuildCommandLine>build.bat</NMakeBuildCommandLine>
@@ -87,14 +88,14 @@
     <NMakeCleanCommandLine>clean.bat</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>rebuild.bat</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <IncludePath>$(ProjectDir)\include;</IncludePath>
+    <IncludePath>$(ProjectDir)\source;</IncludePath>
     <SourcePath>$(ProjectDir)\source;</SourcePath>
     <NMakeIncludeSearchPath>$(ProjectDir)\include;</NMakeIncludeSearchPath>
     <ReferencePath />
     <LibraryPath />
     <LibraryWPath />
     <ExcludePath />
-    <NMakeForcedIncludes>$(ProjectDir)\include\global\global.h;</NMakeForcedIncludes>
+    <NMakeForcedIncludes>$(ProjectDir)\source\global\global.h;</NMakeForcedIncludes>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeBuildCommandLine>build.bat</NMakeBuildCommandLine>
@@ -106,14 +107,14 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\cpu.h" />
+    <ClCompile Include="source\cpu.h" />
     <ClCompile Include="source\cpu.cpp" />
     <ClCompile Include="source\descriptor_tables\gdt.cpp" />
     <ClCompile Include="source\descriptor_tables\idt.cpp" />
     <ClCompile Include="source\devices\keyboard.cpp" />
     <ClCompile Include="source\devices\timer.cpp" />
     <ClCompile Include="source\extern_isrs.cpp" />
-    <ClCompile Include="source\threading\atomic_bool.cpp" />
+    <ClCompile Include="source\text_mode\console.cpp" />
     <ClCompile Include="source\threading\scheduler.cpp" />
     <ClCompile Include="source\std\format.cpp" />
     <ClCompile Include="source\interrupts.cpp" />
@@ -122,7 +123,6 @@
     <ClCompile Include="source\devices\vga.cpp" />
     <ClCompile Include="source\memory\heap.cpp" />
     <ClCompile Include="source\memory\memory.cpp" />
-    <ClCompile Include="source\console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gdbinit" />
@@ -130,32 +130,29 @@
     <None Include="gdb\map_load.py" />
     <None Include="linker.ld" />
     <None Include="source\boot.asm" />
-    <None Include="build.bat" />
     <None Include="source\isrs.asm" />
     <None Include="source\descriptor_tables\descriptors.asm" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\descriptor_tables\descriptor.h" />
-    <ClInclude Include="include\descriptor_tables\gdt.h" />
-    <ClInclude Include="include\descriptor_tables\idt.h" />
-    <ClInclude Include="include\devices\timer.h" />
-    <ClInclude Include="include\extern_isrs.h" />
-    <ClInclude Include="include\devices\keyboard.h" />
-    <ClInclude Include="include\std\array_list.h" />
-    <ClInclude Include="include\std\format.h" />
-    <ClInclude Include="include\global\global.h" />
-    <ClInclude Include="include\std\io.h" />
-    <ClInclude Include="include\interrupts.h" />
-    <ClInclude Include="include\std\mem.h" />
-    <ClInclude Include="include\devices\vga.h" />
-    <ClInclude Include="include\std\int.h" />
-    <ClInclude Include="include\std\compiler.h" />
-    <ClInclude Include="include\memory\heap.h" />
-    <ClInclude Include="include\memory\memory.h" />
-    <ClInclude Include="include\console.h" />
-    <ClInclude Include="include\threading\atomic_bool.h" />
-    <ClInclude Include="include\threading\mutex.h" />
-    <ClInclude Include="include\threading\scheduler.h" />
+    <ClInclude Include="source\descriptor_tables\descriptor.h" />
+    <ClInclude Include="source\descriptor_tables\gdt.h" />
+    <ClInclude Include="source\descriptor_tables\idt.h" />
+    <ClInclude Include="source\devices\timer.h" />
+    <ClInclude Include="source\extern_isrs.h" />
+    <ClInclude Include="source\devices\keyboard.h" />
+    <ClInclude Include="source\std\format.h" />
+    <ClInclude Include="source\global\global.h" />
+    <ClInclude Include="source\std\io.h" />
+    <ClInclude Include="source\interrupts.h" />
+    <ClInclude Include="source\std\mem.h" />
+    <ClInclude Include="source\devices\vga.h" />
+    <ClInclude Include="source\std\int.h" />
+    <ClInclude Include="source\std\compiler.h" />
+    <ClInclude Include="source\memory\heap.h" />
+    <ClInclude Include="source\memory\memory.h" />
+    <ClInclude Include="source\text_mode\console.h" />
+    <ClInclude Include="source\text_mode\cell.h" />
+    <ClInclude Include="source\threading\scheduler.h" />
     <ClInclude Include="source\cpu.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

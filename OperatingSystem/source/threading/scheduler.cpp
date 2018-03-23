@@ -1,24 +1,31 @@
 #include <threading/scheduler.h>
 #include <interrupts.h>
 #include <std/mem.h>
-#include <console.h>
 #include <cpu.h>
+
+#ifdef DEBUG_SCHEDULER
+#include <text_mode/console.h>
+using text_mode::console;
+#endif
 
 using namespace threading;
 
-#define MAX_THREADS 5
+const int max_threads = 5;
+const dword stack_memory_per_thread = 0x1000;
 extern dword __threads_stack_start__;
 
 
 
-struct thread_state {
+struct thread_state 
+{
 	int id; 
 	cpu::general_registers regs;
 	dword eflags;
 	dword eip;
 } PACKED;
 
-static thread_state _threads[MAX_THREADS];
+
+static thread_state _threads[max_threads];
 
 
 thread_state* current_thread_state;
@@ -30,8 +37,9 @@ static int _running_thread_index;
 
 static void context_switch(interrupts::interrupt_frame& frame);
 
-void scheduler::initialize() {
-	std::mem::zero<thread_state>(_threads, MAX_THREADS);
+void scheduler::initialize() 
+{
+	std::mem::zero<thread_state>(_threads, max_threads);
 	_running_thread_index = 0;
 	current_thread_state = &_threads[0];
 
@@ -39,26 +47,29 @@ void scheduler::initialize() {
 	_current_length = 1;
 	_next_stack_pointer = (dword)&__threads_stack_start__;
 	interrupts::set_handler(interrupts::irqs::timer, context_switch);
-	console::write_number(_running_thread_index);
+
 	_threads[0].id = 0;
 }
 
-void scheduler::create_thread(thread_function f) {
+void scheduler::create_thread(thread_function start_function) 
+{
 	_threads[_current_length].id = _next_id++;
-	_threads[_current_length].regs.ebp = _next_stack_pointer+0x100;
+	_threads[_current_length].regs.ebp = _next_stack_pointer;
 	_threads[_current_length].regs.esp = _next_stack_pointer;
-	_threads[_current_length].eip = (dword)f;
+	_threads[_current_length].eip = (dword)start_function; 
 	_threads[_current_length].eflags = cpu::get_flags() | cpu::flags::interrupt_enable;
-	_next_stack_pointer -= 0x1000;
+	_next_stack_pointer -= stack_memory_per_thread;
 	++_current_length;
 }
 
-void scheduler::thread_exit() {
+void scheduler::thread_exit() 
+{
 	std::mem::zero<thread_state>(&_threads[_running_thread_index]);
 	
 	_current_length -= 1;
 
-	for (int i = _running_thread_index; i < _current_length; ++i) {
+	for (int i = _running_thread_index; i < _current_length; ++i) 
+	{
 		_threads[_running_thread_index] = _threads[_running_thread_index + 1];
 	}
 }
@@ -71,32 +82,32 @@ void scheduler::thread_exit() {
 	- sets eip to the current thread
 
 */
-
-
-#define DEBUG_CONTEXT_SWITCH
-
-inline static void save_thread_state(const interrupts::interrupt_frame& frame) {
+static void save_thread_state(const interrupts::interrupt_frame& frame) 
+{
 	current_thread_state->regs = frame.regs;
 	current_thread_state->eip = frame.eip;
 	current_thread_state->eflags = frame.eflags;
 }
 
-inline static void find_next_thread() {
+static void find_next_thread() 
+{
 	_running_thread_index = (_running_thread_index + 1) % _current_length;
 	current_thread_state = &_threads[_running_thread_index];
 }
 
-inline static void restore_thread_state(interrupts::interrupt_frame& frame) {
+static void restore_thread_state(interrupts::interrupt_frame& frame) 
+{
 	frame.regs = current_thread_state->regs;
 	frame.eip = current_thread_state->eip;
 	frame.eflags = current_thread_state->eflags;
 }
 
-static void context_switch(interrupts::interrupt_frame& frame) {
+static void context_switch(interrupts::interrupt_frame& frame)
+{
 	
 	save_thread_state(frame);
 
-#ifdef DEBUG_CONTEXT_SWITCH
+#ifdef DEBUG_SCHEDULER
 	console::write_text("now: esp=0x");
 	console::write_number(frame.regs.esp, 16);
 
@@ -109,7 +120,7 @@ static void context_switch(interrupts::interrupt_frame& frame) {
 
 	find_next_thread();
 
-#ifdef DEBUG_CONTEXT_SWITCH
+#ifdef DEBUG_SCHEDULER
 	console::write_text("   next: esp=0x");
 	console::write_number(current_thread_state->regs.esp, 16);
 

@@ -1,6 +1,7 @@
 #include <extern_isrs.h>
 
-extern "C" {
+extern "C" 
+{
 	extern void isr0();
 	extern void isr1();
 	extern void isr2();
@@ -54,7 +55,7 @@ extern "C" {
 
 typedef void(*function)();
 
-const function arr[] = 
+const function interrupt_services[] = 
 {
 	isr0,
 	isr1,
@@ -107,6 +108,7 @@ const function arr[] =
 	isr48
 };
 
-void* get_extern_address(word offset) {
-	return (void*)arr[offset];
+void* get_isr_address(word offset)
+{
+	return (void*)interrupt_services[offset];
 }

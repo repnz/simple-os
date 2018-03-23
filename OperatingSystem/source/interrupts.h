@@ -2,8 +2,10 @@
 #include <std/compiler.h>
 #include <cpu.h>
 
-namespace interrupts {
-	struct interrupt_frame {
+namespace interrupts 
+{
+	struct interrupt_frame 
+	{
 		cpu::general_registers regs;    // Pushed by pusha
 		dword int_no, err_code;    // Interrupt number and error code (if applicable)
 		dword eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
@@ -60,7 +62,8 @@ namespace interrupts {
 	inline void disable() {
 		ASM_VOLATILE("cli");
 	}
-
+	
+	void ignore(dword interrupt_code);
 	void set_handler(dword interrupt_code, interrupt_handler handler);
 }
 

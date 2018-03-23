@@ -2,13 +2,23 @@
 #include <std/compiler.h>
 
 namespace cpu {
-	struct general_registers {
-		dword edi, esi, ebp, esp, ebx, edx, ecx, eax; // Order of pusha
+	struct general_registers 
+	{
+		dword 
+			edi,
+			esi,
+			ebp, 
+			esp,
+			ebx,
+			edx,
+			ecx,
+			eax; // Order of pusha
 	} PACKED;
 
 	extern "C" dword get_flags();
 
-	namespace flags {
+	namespace flags 
+	{
 		const dword carry = 0x1;
 		const dword parity = 0x4;
 		const dword adjust = 0x10;

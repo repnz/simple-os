@@ -1,11 +1,13 @@
 #pragma once
-#include <descriptor_tables/descriptor.h>
 
-namespace descriptor_tables {
-	namespace idt {
+namespace descriptor_tables
+{
+	namespace idt
+	{
 		const dword size = 255;
 		
-		namespace attributes {
+		namespace attributes 
+		{
 			const byte present = 0b10000000;
 			const byte ring_0 = 0b00000000;
 			const byte ring_1 = 0b00100000;

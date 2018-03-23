@@ -2,31 +2,19 @@
 #include <interrupts.h>
 #include <std/io.h>
 
-using namespace devices;
 
-keyboard::handler _handler;
+using devices::keyboard_device;
+
+keyboard_device::handler _handler;
 
 const byte keyboard_port = 0x60;
 
-typedef byte command;
-
-namespace commands {
-	const command set_led = 0xed;
-	const command echo = 0xee;
-	const command scan_code_set_cntrl = 0xF0;
-	const command resend = 0xfe;
-}
-
-namespace scan_code_set_cntrl_sub  {
-	const command get_scan_code_set = 0;
-	const command set_scan_code_set_1 = 1;
-	const command set_scan_code_set_2 = 2;
-	const command set_scan_code_set_3 = 3;
-}
-
-struct cmd_result {
-	byte cmd;
-	byte result;
+enum command
+{
+	set_led = 0xed,
+	echo = 0xee,
+	scan_code_set_cntrl = 0xf0,
+	resend = 0xfe
 };
 
 /* KBDUS means US Keyboard Layout. This is a scancode table
@@ -36,8 +24,8 @@ struct cmd_result {
 *  whatever you want using a macro, if you wish! */
 byte kbdus[128] =
 {
-	0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
-	'9', '0', '-', '=', '\b',	/* Backspace */
+	0, 27,'1','2','3','4','5','6','7','8','9','0','-','=',
+	'\b',	/* Backspace */
 	'\t',			/* Tab */
 	'q', 'w', 'e', 'r',	/* 19 */
 	't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',		/* Enter key */
@@ -75,82 +63,69 @@ byte kbdus[128] =
 };
 
 
-void keyboard_handler(interrupts::interrupt_frame& frame) {
-	byte scan_code;
-
-	scan_code = inb(keyboard_port);
-
+void keyboard_handler(interrupts::interrupt_frame& frame) 
+{
+	const byte scan_code = inb(keyboard_port);
+	
 	_handler(kbdus[scan_code & 0x7f], scan_code & 0x80);
 }
 
 void empty_handler(interrupts::interrupt_frame& frame){}
 
-void keyboard::initialize() {
-	interrupts::set_handler(interrupts::irqs::keyboard, empty_handler);
-}
-
-void keyboard::initialize(keyboard::handler handler) {
+void keyboard_device::set_handler(keyboard_device::handler handler)
+{
 	_handler = handler;
 	interrupts::set_handler(interrupts::irqs::keyboard, keyboard_handler);
 }
 
-static inline keyboard::result_code wait_for_code(keyboard::result_code code) {
-	keyboard::result_code cur_code;
+static keyboard_device::result_code wait_for_code(keyboard_device::result_code code) 
+{
+	byte cur_code = 0;
 
-	for (int i=0; i<10; ++i){
+	for (int i=0; i<10; ++i)
+	{
 		cur_code = inb(keyboard_port);
 
-		if (cur_code == code) {
+		if (cur_code == code) 
+		{
 			return code;
 		}
 	}
 
-	return cur_code;
+	return static_cast<keyboard_device::result_code>(cur_code);
 }
 
-keyboard::result_code keyboard::echo() {
-	outb_wait(keyboard_port, commands::echo);
-	return inb(keyboard_port);
-}
 
-keyboard::result_code keyboard::set_rate_and_delay() {
-}
-
-byte keyboard::get_scan_code_set() {
-	result_code code;
-
-	outb(keyboard_port, commands::scan_code_set_cntrl);
-
-	code = wait_for_code(results::ack);
-	
-	if (code != results::ack) {
-		return code;
-	}
-
-	outb(keyboard_port, scan_code_set_cntrl_sub::get_scan_code_set);
-
-	code = wait_for_code(results::ack);
-
-	if (code != results::ack) {
-		return code;
-	}
-
-	return inb(keyboard_port);
-}
-
-keyboard::result_code devices::keyboard::set_scan_code_set(byte set_id)
+keyboard_device::result_code keyboard_device::echo_command()
 {
-	outb(keyboard_port, commands::scan_code_set_cntrl);
+	outb_wait(keyboard_port, command::echo);
+	return static_cast<result_code>(inb(keyboard_port));
+}
 
-	if (wait_for_code(results::ack) != results::ack) {
+byte keyboard_device::get_scan_code_set()
+{
+	outb(keyboard_port, (byte)command::scan_code_set_cntrl);
+
+	result_code code = wait_for_code(result_code::ack);
+	
+	if (code != result_code::ack) 
+	{
 		return -1;
 	}
 
-	outb(keyboard_port, set_id);
+	outb(keyboard_port, 0);
 
-	if (wait_for_code(results::ack) != results::ack) {
+	code = wait_for_code(result_code::ack);
+
+	if (code != result_code::ack) 
+	{
 		return -1;
 	}
 
-	return 0;
+	return inb(keyboard_port);
+}
+
+keyboard_device::scan_code keyboard_device::wait_for_keypress()
+{
+	return (scan_code)inb(keyboard_port);
 }

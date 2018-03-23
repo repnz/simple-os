@@ -1,3 +1,5 @@
+import sys
+
 try:
     import gdb
     run_inside_gdb = True
@@ -54,7 +56,7 @@ def create_add_command(object_file, sections):
     cmd = "add-symbol-file {object_file} {text} -readnow".format(object_file=object_file, text=sections['.text'])
     del sections['.text']
     
-    for section_name, load_address in sections.iteritems():
+    for section_name, load_address in sections.items():
         cmd += ' -s {section} {address}'.format(section=section_name, address=load_address)
 
     return cmd
@@ -62,7 +64,7 @@ def create_add_command(object_file, sections):
 def main():
     map_filename = sys.argv[1]
     linker_map = map_load(map_filename)
-    print json.dumps(linker_map, sort_keys=True, indent=4)    
+    print(json.dumps(linker_map, sort_keys=True, indent=4))
 
 if run_inside_gdb:
     class LoadLinkerMapCommand(gdb.Command):
@@ -76,7 +78,7 @@ if run_inside_gdb:
             argv = gdb.string_to_argv(arg)
             map_filename = argv[0]
 
-            for object_file, sections in map_load(map_filename).iteritems():
+            for object_file, sections in map_load(map_filename).items():
                 cmd = create_add_command(object_file, sections)
                 gdb.execute(cmd)
 

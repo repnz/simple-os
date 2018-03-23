@@ -1,12 +1,11 @@
 PROJECT_NAME := operating-system
 CC        := g++
-CFLAGS    := -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -masm=intel  -nostdlib
+CFLAGS    := -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -masm=intel  -nostdlib -std=c++0x
 ASM       := nasm
 ASM_FLAGS := -f elf
 MAP_FILE  := obj/$(PROJECT_NAME).m
 LINKER    := ld -T linker.ld -Map $(MAP_FILE)
 SRCDIR    := source
-HEADERDIR := include
 BUILDDIR  := obj
 BINDIR    := bin
 TARGET    := $(BINDIR)/$(PROJECT_NAME)
@@ -17,7 +16,7 @@ HEDEARS   := $(shell find $(HEADERDIR) -type f -name *.h*)
 OBJECTS   := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(addsuffix .o,$(basename $(SOURCES))))
 DEPS      := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(addsuffix .d,$(basename $(SOURCES))))
 LIB       := 
-INC       := -I $(HEADERDIR) -include $(HEADERDIR)/global/global.h
+INC       := -I $(SRCDIR) -include $(SRCDIR)/global/global.h
 
 all: debug
 pedant: debug

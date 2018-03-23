@@ -6,14 +6,17 @@ const dword block_size = 14;
 
 memory::heap _heap;
 
-void memory::initialize() {
+void memory::initialize() 
+{
 	_heap.initialize((void*)&__dynamic_memory_start__, block_size);
 }
 
-void* memory::allocate(dword bytes) {
+void* memory::allocate(const dword bytes) 
+{
 	return _heap.allocate(bytes);
 }
 
-void memory::free(void* address) {
+void memory::free(void* address) 
+{
 	_heap.free(address);
 }
