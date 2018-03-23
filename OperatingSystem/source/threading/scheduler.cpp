@@ -3,6 +3,8 @@
 #include <std/mem.h>
 #include <cpu.h>
 
+#define DEBUG_SCHEDULER
+
 #ifdef DEBUG_SCHEDULER
 #include <text_mode/console.h>
 using text_mode::console;
@@ -40,11 +42,11 @@ static void context_switch(interrupts::interrupt_frame& frame);
 void scheduler::initialize() 
 {
 	std::mem::zero<thread_state>(_threads, max_threads);
-	_running_thread_index = 0;
+	_running_thread_index = -1;
 	current_thread_state = &_threads[0];
 
 	_next_id = 1;
-	_current_length = 1;
+	_current_length = 0;
 	_next_stack_pointer = (dword)&__threads_stack_start__;
 	interrupts::set_handler(interrupts::irqs::timer, context_switch);
 
@@ -104,19 +106,24 @@ static void restore_thread_state(interrupts::interrupt_frame& frame)
 
 static void context_switch(interrupts::interrupt_frame& frame)
 {
-	
-	save_thread_state(frame);
+	if (_running_thread_index != -1)
+	{
+		save_thread_state(frame);
 
 #ifdef DEBUG_SCHEDULER
-	console::write_text("now: esp=0x");
-	console::write_number(frame.regs.esp, 16);
+		console::write_text("now: esp=0x");
+		console::write_number(frame.regs.esp, 16);
 
-	console::write_text(" ebp=0x");
-	console::write_number(frame.regs.ebp, 16);
+		console::write_text(" ebp=0x");
+		console::write_number(frame.regs.ebp, 16);
 
-	console::write_text(" index=");
-	console::write_number(_running_thread_index);
+		console::write_text(" index=");
+		console::write_number(_running_thread_index);
 #endif
+
+	}
+
+
 
 	find_next_thread();
 
