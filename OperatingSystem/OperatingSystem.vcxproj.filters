@@ -78,6 +78,9 @@
     <None Include=".gdbinit" />
     <None Include="gdb\connect.py" />
     <None Include="gdb\map_load.py" />
+    <None Include="source\threading\scheduler.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\cpu.asm">

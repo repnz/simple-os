@@ -56,11 +56,22 @@ void scheduler::initialize()
 void scheduler::create_thread(thread_function start_function) 
 {
 	_threads[_current_length].id = _next_id++;
+	_threads[_current_length].regs.edi = 1;
+	_threads[_current_length].regs.esi = 2;
+	_threads[_current_length].regs.ebp = 3;
+	_threads[_current_length].regs.esp = 4;
+	_threads[_current_length].regs.ebx = 5;
+	_threads[_current_length].regs.edx = 6;
+	_threads[_current_length].regs.ecx = 7;
+	_threads[_current_length].regs.eax = 8;
 	_threads[_current_length].regs.ebp = _next_stack_pointer;
 	_threads[_current_length].regs.esp = _next_stack_pointer;
 	_threads[_current_length].eip = (dword)start_function; 
 	_threads[_current_length].eflags = cpu::get_flags() | cpu::flags::interrupt_enable;
+	
+	// stack is growing down
 	_next_stack_pointer -= stack_memory_per_thread;
+	
 	++_current_length;
 }
 
@@ -76,14 +87,6 @@ void scheduler::thread_exit()
 	}
 }
 
-/*
-	This function is called after the IRET of the interrupt handler
-	
-	- restores the state of the general registers from the thread_state object
-	- restores the eflags register
-	- sets eip to the current thread
-
-*/
 static void save_thread_state(const interrupts::interrupt_frame& frame) 
 {
 	current_thread_state->regs = frame.regs;
@@ -91,21 +94,31 @@ static void save_thread_state(const interrupts::interrupt_frame& frame)
 	current_thread_state->eflags = frame.eflags;
 }
 
+/*
+ * Use 'round robin' scheduling
+ */
 static void find_next_thread() 
 {
 	_running_thread_index = (_running_thread_index + 1) % _current_length;
 	current_thread_state = &_threads[_running_thread_index];
 }
 
-static void restore_thread_state(interrupts::interrupt_frame& frame) 
-{
-	frame.regs = current_thread_state->regs;
-	frame.eip = current_thread_state->eip;
-	frame.eflags = current_thread_state->eflags;
-}
+/*
+* Assembly function that is called when returning from interrupt
+* Handles restoring current thread state
+*/
+extern "C" void restore_thread_state();
 
+/*
+- Saves the state of the last thread in the thread_state object
+- Finds the next thread to run
+- Sets the EIP after the IRET instruction to restore_thread_state
+*/
 static void context_switch(interrupts::interrupt_frame& frame)
 {
+	/*
+	 * If this is the first context switch, dont save the state
+	 */
 	if (_running_thread_index != -1)
 	{
 		save_thread_state(frame);
@@ -120,10 +133,7 @@ static void context_switch(interrupts::interrupt_frame& frame)
 		console::write_text(" index=");
 		console::write_number(_running_thread_index);
 #endif
-
 	}
-
-
 
 	find_next_thread();
 
@@ -135,7 +145,7 @@ static void context_switch(interrupts::interrupt_frame& frame)
 	console::write_number(current_thread_state->regs.ebp, 16);
 	console::write_line();
 #endif
-
-	restore_thread_state(frame);
 	
+	// set the function that will be called after the IRET
+	frame.eip = (dword)restore_thread_state;
 }

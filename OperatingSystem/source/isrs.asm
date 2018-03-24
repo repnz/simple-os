@@ -1,10 +1,6 @@
 [bits 32]
 section .data
 
-temp_eip dd 0
-temp_esp dd 0
-temp_eax dd 0
-
 section .text
 
 
@@ -35,7 +31,8 @@ global isr_common_stub
 ; up for kernel mode segments, calls the C-level fault handler,
 ; and finally restores the stack frame.
 isr_common_stub:
-    pushad                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+    pushad                    
   
 	call isr_handler
 	
