@@ -90,6 +90,8 @@ void scheduler::thread_exit()
 static void save_thread_state(const interrupts::interrupt_frame& frame) 
 {
 	current_thread_state->regs = frame.regs;
+	// shift the stack position by 20 bytes to compensate for the five DWORD registers (eip, cs, eflags, sp, ss) the CPU put on the stack
+	current_thread_state->regs.esp += 20;
 	current_thread_state->eip = frame.eip;
 	current_thread_state->eflags = frame.eflags;
 }
